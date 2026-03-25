@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 600">
+  <!-- Clean White Background handled by container -->
+  
+  <!-- Main Shield -->
+  <path d="M256,40 C190,40 100,55 60,95 C60,210 60,300 256,480 C452,300 452,210 452,95 C412,55 322,40 256,40 Z" 
+        fill="white" 
+        stroke="#0b468a" 
+        stroke-width="12" />
+
+  <!-- Red Medical Cross -->
+  <g transform="translate(256, 180)">
+    <rect x="-15" y="-45" width="30" height="90" fill="#e31e24" rx="2" />
+    <rect x="-45" y="-15" width="90" height="30" fill="#e31e24" rx="2" />
+  </g>
+
+  <!-- Blue Sanitation Sparkles -->
+  <!-- Left Sparkle -->
+  <path d="M165,225 L170,210 L175,225 L190,230 L175,235 L170,250 L165,235 L150,230 Z" fill="#00a8e8" />
+  <!-- Right Sparkle -->
+  <path d="M335,165 L340,150 L345,165 L360,170 L345,175 L340,190 L335,175 L320,170 Z" fill="#00a8e8" />
+
+  <!-- Green Sprout (Three Leaves) -->
+  <g transform="translate(256, 380)">
+    <!-- Center Leaf -->
+    <path d="M0,0 Q18,-35 0,-60 Q-18,-35 0,0 Z" fill="#15a34a" />
+    <!-- Left Leaf -->
+    <path d="M-5,-5 Q-45,-20 -55,20 Q-20,40 -5,-5 Z" fill="#15a34a" transform="rotate(-15)" />
+    <!-- Right Leaf -->
+    <path d="M5,-5 Q45,-20 55,20 Q20,40 5,-5 Z" fill="#15a34a" transform="rotate(15)" />
+  </g>
+
+  <!-- Official Department Text -->
+  <text x="256" y="550" 
+        font-family="Arial, sans-serif" 
+        font-weight="bold" 
+        font-size="28" 
+        text-anchor="middle" 
+        fill="#0b468a" 
+        letter-spacing="1">HEALTH &amp; SANITATION</text>
+
+</svg>

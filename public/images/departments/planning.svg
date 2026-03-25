@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="planGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4338ca;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Building Block -->
+  <rect x="120" y="80" width="160" height="180" fill="url(#planGrad)" filter="url(#shadow)"/>
+  
+  <!-- Windows -->
+  <rect x="140" y="110" width="40" height="40" fill="white" opacity="0.8"/>
+  <rect x="220" y="110" width="40" height="40" fill="white" opacity="0.8"/>
+  <rect x="140" y="180" width="40" height="40" fill="white" opacity="0.8"/>
+  <rect x="220" y="180" width="40" height="40" fill="white" opacity="0.8"/>
+  
+  <!-- Roof -->
+  <path d="M100,80 L200,20 L300,80 Z" fill="#312e81"/>
+</svg>

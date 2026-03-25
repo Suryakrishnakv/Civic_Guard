@@ -1,0 +1,47 @@
+\chapter{APPENDIX}
+
+\section{Source Code Link}
+The full project source code, including the Laravel backend, Tailwind CSS configurations, and PostgreSQL schema migrations, is hosted securely on a private Git repository. 
+
+\begin{itemize}
+    \item \textbf{Repository URL:} \textit{Available upon request from the project administrator or secondary mentor.}
+    \item \textbf{Branch:} \texttt{main} (Production Stable) / \texttt{develop} (Staging)
+    \item \textbf{Key Directory Structure:}
+    \begin{itemize}
+        \item \texttt{/app/Http/Controllers}: Core business logic.
+        \item \texttt{/resources/views}: Front-end Blade templates.
+        \item \texttt{/database/migrations}: Relational schema definitions.
+    \end{itemize}
+\end{itemize}
+
+\section{User Manual}
+The following instructions outline the fundamental workflows for the three primary user roles within the CivicGuard application.
+
+\subsection{Citizen User Manual}
+To report a civic infrastructure issue:
+\begin{enumerate}
+    \item \textbf{Access Portals:} Open the CivicGuard URL in any modern web browser.
+    \item \textbf{Registration:} Click on "Register" and provide your Name, Email, and a secure Password.
+    \item \textbf{Submit Report:} Click the "Report Now" button on your dashboard.
+    \item \textbf{Provide Details:} Select a Category (e.g., Road Damage), describe the issue, and upload a clear photo of the damage.
+    \item \textbf{Tracking:} Monitor the status of your submission (Pending $\rightarrow$ Assigned $\rightarrow$ Repaired) from your dashboard.
+\end{enumerate}
+
+\subsection{Department Officer Manual}
+To manage and resolve assigned reports:
+\begin{enumerate}
+    \item \textbf{Secure Login:} Use the credentials provided by the system administrator.
+    \item \textbf{Task Review:} View the "My Tasks" section to see reports routed to your department.
+    \item \textbf{Site Inspection:} Update report status to "In Progress" once inspection begins.
+    \item \textbf{Resolution:} Once repair is complete, click "Mark as Repaired."
+    \item \textbf{Proof of Completion:} Upload a resolution photo to verify the fix and notify the citizen.
+\end{enumerate}
+
+\subsection{Administrator Manual}
+For global system moderation:
+\begin{enumerate}
+    \item \textbf{Admin Dashboard:} Access the centralized control center.
+    \item \textbf{User Moderation:} Deactivate or promote accounts (Citizen $\rightarrow$ Officer) as required.
+    \item \textbf{Announcements:} Use the "Global Broadcast" feature to notify all users about scheduled maintenance or repairs.
+    \item \textbf{System Audit:} Monitor global report density across different wards to allocate budgets effectively.
+\end{enumerate}

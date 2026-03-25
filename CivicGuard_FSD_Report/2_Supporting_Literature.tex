@@ -1,0 +1,40 @@
+\chapter{SUPPORTING LITERATURE}
+
+\section{Introduction}
+Developing a modern, community-driven application like CivicGuard requires a solid foundation in both software engineering principles and specific technical frameworks. This chapter outlines the primary technologies and concepts that support the system's architecture.
+
+\section{The Laravel Web Framework}
+Laravel is an open-source PHP web framework created by Taylor Otwell, designed for the development of web applications following the model–view–controller (MVC) architectural pattern. Some of its key features used in CivicGuard include:
+\begin{itemize}
+    \item \textbf{Eloquent ORM:} Providing a beautiful ActiveRecord implementation, Eloquent abstracts complex SQL queries into intuitive PHP object interactions. This ensures that the CivicGuard database remains maintainable and that data relationships (like Users having many Reports) are handled elegantly.
+    \item \textbf{Blade Templating Engine:} Blade allows for the creation of dynamic, reusable UI layouts with minimal performance overhead. It enables the conditional rendering of dashboards based on the user's role without cluttering the view logic.
+    \item \textbf{Middleware Stack:} Middleware acts as a gatekeeper for the application. In CivicGuard, custom middleware is used to verify that only authenticated officers can update repair statuses, preventing unauthorized access to critical administrative functions.
+    \item \textbf{Artisan CLI \& Migrations:} These tools automate the setup and evolution of the database schema, ensuring that the project can be deployed consistently across different environments (Development, Staging, Production).
+\end{itemize}
+
+The user interface of CivicGuard is designed to be both aesthetically pleasing and highly responsive, bridging the gap between a standard government portal and a modern consumer application.
+\begin{itemize}
+    \item \textbf{Tailwind CSS:} Unlike traditional component-based frameworks, Tailwind provides a utility-first approach. This allows for the precise tuning of the CivicGuard aesthetic—using specific color palettes, custom spacing, and professional typography—to ensure the interface feels premium and intuitive.
+    \item \textbf{Vite:} Serving as the frontend orchestrator, Vite ensures that the CSS and JavaScript assets are bundled and optimized for fast page loads, which is critical for users on mobile devices with variable internet speeds.
+\end{itemize}
+
+\section{Database Management: PostgreSQL}
+PostgreSQL is the world's most advanced open-source relational database. It was chosen for CivicGuard due to its proven reliability, robust feature set, and seamless integration with Laravel's Eloquent ORM. The relational nature of PostgreSQL is perfect for managing the structured data of users, reports, and their statuses.
+
+\section{Development Methodologies}
+The project follows the \textbf{Agile Methodology}, emphasizing iterative development and continuous feedback. This approach allowed for the refinement of features like the "Automated Routing" and "Resolution Photos" as the project progressed.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|p{4cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Layer} & \textbf{Technology} & \textbf{Technical Advantage} \\ \hline
+\textbf{Backend} & Laravel 11 & High security, Eloquent ORM, and rapid routing logic. \\ \hline
+\textbf{Frontend} & Tailwind CSS & Modern CivicGuard aesthetic with utility-first maintenance. \\ \hline
+\textbf{Database} & PostgreSQL 14.0 & Relational integrity for complex role/report mapping. \\ \hline
+\textbf{Infrastructure} & XAMPP/Cloud & Flexible deployment with minimal server configuration. \\ \hline
+\end{tabular}
+\caption{CivicGuard Technical Ecosystem Summary}
+\label{tab:tech_stack}
+\end{table}

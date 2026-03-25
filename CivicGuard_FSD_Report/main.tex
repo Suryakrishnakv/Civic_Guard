@@ -1,0 +1,95 @@
+\documentclass[12pt,a4paper]{report}  
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{times}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry} 
+\usepackage{setspace}
+\usepackage[backend=biber,style=numeric]{biblatex}
+
+\addbibresource{references.bib}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\geometry{margin=1in}
+
+\lstdefinestyle{phpstyle}{
+  language=PHP,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  tabsize=2,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  numbers=none
+}
+
+\titleformat{\chapter}[hang]{\bfseries\Large}{\thechapter\ :}{1em}{}  
+
+\titleformat{\chapter}
+  {\vspace{-2cm} \centering\bfseries\LARGE}
+  {\thechapter}{1em}{}  
+
+\begin{document}
+
+\include{coverpage}
+\newpage
+\include{certificate}
+\newpage
+\setstretch{1.15}
+\pagenumbering{roman}
+\include{acknowledgement}
+\newpage
+\include{abstract}
+\newpage
+
+\addcontentsline{toc}{chapter}{LIST OF TABLES}
+\renewcommand{\listtablename}{\hfill \bfseries \LARGE LIST OF TABLES \hfill}
+\listoftables
+\newpage
+
+\addcontentsline{toc}{chapter}{LIST OF FIGURES}
+\renewcommand{\listfigurename}{\hfill \bfseries \LARGE LIST OF FIGURES \hfill}
+\listoffigures
+\newpage
+
+\renewcommand{\contentsname}{\hfill \bfseries \LARGE CONTENTS \hfill}
+\tableofcontents
+\newpage
+
+\pagestyle{fancy}
+\fancyhf{}  
+\fancyhead[R]{{CivicGuard}}
+
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[L]{Department of Computer Science, RCSS}
+\fancyfoot[R]{\thepage}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[R]{{CivicGuard}}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyfoot[L]{Department of Computer Science, RCSS}
+  \fancyfoot[R]{\thepage}
+}
+
+\pagenumbering{arabic}
+
+\include{1_Introduction}
+\include{2_Supporting_Literature}
+\include{3_System_Analysis}
+\include{4_System_Design}
+\include{5_Implementation}
+\include{6_Testing}
+\include{7_Deployment}
+\include{8_Git_History}
+\include{9_Conclusion}
+\include{10_Future_Works}
+\include{11_Appendix}
+
+\end{document}

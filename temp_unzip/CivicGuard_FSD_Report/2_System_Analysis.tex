@@ -1,0 +1,103 @@
+\chapter{SYSTEM ANALYSIS }
+ 
+ \section{Module Description}
+ The "CivicGuard" application is divided into several functional modules, each playing a critical role in ensuring efficient reporting, routing, and resolution of public asset issues. The main modules include:
+ \begin{itemize}
+    \item \textbf{User Authentication Module:} This module handles the registration and login processes for all users, including Citizens, Department Officers, and Administrators. It ensures secure access to personal dashboards and sensitive reporting data. It includes features for password hashing, multi-role access control, and session management.
+    \item \textbf{Report Submission Module:} This is the core module for citizens. It allows users to create new reports by selecting categories (e.g., Road Damage, Street Light Not Working), providing a detailed description, specifying a location, and uploading a mandatory photograph of the damage. This module ensures that all necessary data is captured before a report enters the system.
+    \item \textbf{Automated Routing Module:} When a report is submitted, this module uses a predefined map to instantly assign the report to the relevant municipal department. For instance, a "Drainage Block" report is automatically tagged for the Engineering & Public Works Department. This eliminates red tape and speeds up the response time.
+    \item \textbf{Department Officer Dashboard:} Once a report is assigned to a department, officers within that department can view it. This module allows officers to track their assigned tasks, update report statuses (e.g., "In Progress", "Repaired"), and provide official remarks. It ensures accountability by requiring a resolution photo for completed works.
+    \item \textbf{Admin Management Module:} The top-level module for system administrators. It provides tools for managing users (approving officers, viewing citizen lists), monitoring all system-wide reports, and posting public announcements or broadcasts that appear on all users' dashboards.
+    \item \textbf{Notification & Subscription Module:} This module keeps users informed. Citizens receive real-time notifications about status updates to their reports. Users can also toggle email subscriptions to receive critical civic alerts directly in their inbox, ensuring they stay engaged with their community.
+\end{itemize}
+
+\section{Business Rules}
+Business rules are specific guidelines that govern the operations of the CivicGuard system:
+\\\\
+\textbf{User Roles & Permissions}
+\begin{itemize}
+    \item \textbf{Citizens} can only view and manage reports they have personally submitted.
+    \item \textbf{Department Officers} can only see and update reports belonging to their specific department.
+    \item \textbf{Administrators} have universal visibility across all reports and user data.
+\end{itemize}
+
+\textbf{Report Lifecycle}
+\begin{itemize}
+    \item Every report must include a valid category, a location description, and a photo of the incident.
+    \item A report automatically begins in the \textbf{Pending} state upon submission.
+    \item Officers must upload a \textbf{Resolution Photo} to successfully mark a report as \textbf{Repaired}. This is a mandatory constraint to ensure work is actually completed.
+    \item Reports can be \textbf{Rejected} if the description is unclear or the issue does not fall under municipal jurisdiction, but a reason must be provided in the remarks.
+\end{itemize}
+
+\textbf{Data Integrity}
+\begin{itemize}
+    \item All status updates are timestamped to track the performance and response time of each department.
+    \item Category to Department mappings are fixed within the system logic to prevent accidental misrouting of public complaints.
+\end{itemize}
+
+\newpage
+\section{Analysis of Architecture}
+{\large \textbf{Laravel Web Framework}}\\\\
+Laravel is a powerful PHP framework used for building robust web applications. For CivicGuard, Laravel provides the foundation for secure routing, efficient database management (Eloquent ORM), and a clean MVC architecture.
+
+\begin{enumerate}
+    \item \textbf{Eloquent ORM & Database Persistence:}
+    \begin{itemize}
+        \item Laravel's ORM allows for expressive interaction with the MySQL database, handling complex relationships between Users, Reports, and Notifications without writing raw SQL.
+    \end{itemize}
+    \item \textbf{Middleware & Security:}
+    \begin{itemize}
+        \item Built-in middleware handles authentication and role authorization, ensuring that Only Officers can access the admin dashboard and specific report data.
+    \end{itemize}
+    \item \textbf{Blade Templating & Vite:}
+    \begin{itemize}
+        \item Blade allows for creating dynamic, reusable UI components. Combined with Vite and Tailwind CSS, it ensures a premium, high-speed user interface for both desktop and mobile views.
+    \end{itemize}
+\end{enumerate}
+
+\section{Feasibility Analysis}
+ 
+ \subsection{Technical Feasibility}
+ CivicGuard is technically feasible as it utilizes the industry-standard Laravel framework and MySQL database. These technologies are widely supported and provide all the necessary tools for authentication, data storage, and automated workflows. The integration of modern CSS frameworks ensures a responsive design that works across devices.
+ 
+ \subsection{Economical Feasibility}
+ The project is highly cost-effective as it relies on open-source technologies. Laravel, PHP, MySQL, and Tailwind CSS are all free to use. Hosting costs are manageable, and there is no need for expensive proprietary software or licenses to run the system.
+ 
+ \subsection{Operational Feasibility}
+ CivicGuard integrates naturally into municipal operations. By automating the reporting and tracking process, it reduces the manual workload for city clerks and improves the visibility of maintenance tasks for both officers and citizens.
+ 
+\section{System Environment}
+ 
+ \subsection{Software Environment}
+ \textbf{Operating System:} Windows/Linux (Server)\\\\
+ \textbf{Back-end Framework:} Laravel 11.x (PHP 8.2+)\\\\
+ \textbf{Database:} MySQL 8.0\\\\
+ \textbf{Style Framework:} Tailwind CSS\\\\
+ \textbf{Web Server:} Apache/Nginx
+
+ \subsection{Hardware Environment}
+ \textbf{Processor (CPU):} i5 12th Gen\\\\
+ \textbf{Memory (RAM):} 16 GB\\\\
+ \textbf{Storage:} 512 GB SSD
+ 
+ \section{Actors and roles}
+ The system involves three primary actors:
+\\\\
+ \textbf{Citizen:} 
+ \begin{itemize}
+    \item Submits damage reports with images.
+    \item Tracks the status of their own reports.
+    \item Manages personal profile and notification settings.
+ \end{itemize}
+ \textbf{Department Officer:} 
+ \begin{itemize}
+    \item Views reports assigned to their department.
+    \item Updates report status and priority.
+    \item Uploads resolution photos and provides completion remarks.
+ \end{itemize}
+ \textbf{System Administrator:} 
+ \begin{itemize}
+    \item Oversees all reports and users.
+    \item Manages user accounts and roles.
+    \item Broadcasts public announcements.
+ \end{itemize}
