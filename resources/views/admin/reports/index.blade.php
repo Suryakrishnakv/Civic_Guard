@@ -118,7 +118,6 @@
                                 <th scope="col" class="px-8 py-5 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Issue & Department</th>
                                 <th scope="col" class="px-6 py-5 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Reporter</th>
                                 <th scope="col" class="px-6 py-5 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Proof</th>
-                                <th scope="col" class="px-6 py-5 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Priority</th>
                                 <th scope="col" class="px-6 py-5 text-left text-xs font-bold text-slate-400 uppercase tracking-wider w-40">Status Update</th>
                                 <th scope="col" class="pr-8 pl-6 py-5 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Action</th>
                             </tr>

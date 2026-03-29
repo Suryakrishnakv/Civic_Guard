@@ -36,15 +36,6 @@
                 </div>
             @endif
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-center">
-             <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-black border uppercase tracking-wider
-                {{ $report->priority === 'Low' ? 'bg-slate-100 text-slate-600 border-slate-200' : '' }}
-                {{ $report->priority === 'Medium' ? 'bg-blue-50 text-blue-600 border-blue-100' : '' }}
-                {{ $report->priority === 'High' ? 'bg-orange-50 text-orange-600 border-orange-100' : '' }}
-                {{ $report->priority === 'Critical' ? 'bg-red-50 text-red-600 border-red-100' : '' }}">
-                {{ $report->priority ?? 'Normal' }}
-            </span>
-        </td>
         <td class="px-6 py-4 whitespace-nowrap">
             <form action="{{ route('admin.reports.update', $report) }}" method="POST">
                 @csrf

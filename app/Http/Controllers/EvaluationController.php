@@ -38,7 +38,7 @@ class EvaluationController extends Controller
         }
 
         // Get available years for the filter
-        $availableYears = Report::selectRaw('YEAR(created_at) as year')
+        $availableYears = Report::selectRaw('EXTRACT(YEAR FROM created_at) as year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year')

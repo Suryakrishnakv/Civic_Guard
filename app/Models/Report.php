@@ -18,7 +18,6 @@ class Report extends Model
         'photo_path',
         'location',
         'status',
-        'priority',
         'remarks',
         'resolution_photo_path',
     ];
@@ -61,5 +60,20 @@ class Report extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(ReportPhoto::class);
+    }
+
+    public function reportedPhotos()
+    {
+        return $this->hasMany(ReportPhoto::class)->where('type', 'reported');
+    }
+
+    public function resolutionPhotos()
+    {
+        return $this->hasMany(ReportPhoto::class)->where('type', 'resolution');
     }
 }

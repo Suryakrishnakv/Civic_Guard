@@ -20,27 +20,37 @@ class ReportController extends Controller
             'category' => 'required|string',
             'description' => 'required|string',
             'location' => 'required|string',
-            'photo' => 'required|image|max:10240', // Mandatory Photo
+            'photos' => 'required|array|min:1',
+            'photos.*' => 'image|max:10240',
         ]);
-
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('reports', 'public');
-        }
 
         $map = Report::getCategoryDepartmentMap();
         $department = $map[$request->category] ?? null;
 
-        Report::create([
+        $report = Report::create([
             'user_id' => Auth::id(),
-            'type' => 'Damage', // Default type
+            'type' => 'Damage',
             'category' => $request->category,
             'department' => $department,
             'description' => $request->description,
             'location' => $request->location,
-            'photo_path' => $photoPath,
             'status' => 'Pending',
         ]);
+
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $index => $photo) {
+                $path = $photo->store('reports', 'public');
+                $report->photos()->create([
+                    'photo_path' => $path,
+                    'type' => 'reported'
+                ]);
+                
+                // Store first photo in main table for backward compatibility
+                if ($index === 0) {
+                    $report->update(['photo_path' => $path]);
+                }
+            }
+        }
 
         return redirect()->route('dashboard')->with('status', 'Report submitted successfully!');
     }
@@ -175,15 +185,15 @@ class ReportController extends Controller
 
         $rules = [
             'status' => 'sometimes|in:Pending,In Progress,Repaired,Rejected',
-            'priority' => 'sometimes|in:Low,Medium,High,Critical',
             'remarks' => 'nullable|string',
-            'resolution_photo' => 'nullable|image|max:10240', // Base rule
+            'resolution_photos' => 'nullable|array',
+            'resolution_photos.*' => 'image|max:10240',
         ];
 
         // Strict validation for Officers: Require Photo when marking as Repaired
         if (Auth::user()->isOfficer() && $request->status === 'Repaired') {
-            if (!$report->resolution_photo_path && !$request->hasFile('resolution_photo')) {
-                return back()->withErrors(['resolution_photo' => 'Officers must upload a completed work photo to mark as Repaired.'])->withInput();
+            if (!$report->resolution_photo_path && !$request->hasFile('resolution_photos')) {
+                return back()->withErrors(['resolution_photos' => 'Officers must upload at least one completed work photo to mark as Repaired.'])->withInput();
             }
         }
 
@@ -193,17 +203,24 @@ class ReportController extends Controller
             $report->status = $request->status;
         }
 
-        if ($request->has('priority')) {
-            $report->priority = $request->priority;
-        }
 
         if ($request->has('remarks')) {
             $report->remarks = $request->remarks;
         }
 
-        if ($request->hasFile('resolution_photo')) {
-            $path = $request->file('resolution_photo')->store('resolution_photos', 'public');
-            $report->resolution_photo_path = $path;
+        if ($request->hasFile('resolution_photos')) {
+            foreach ($request->file('resolution_photos') as $index => $photo) {
+                $path = $photo->store('resolution_photos', 'public');
+                $report->photos()->create([
+                    'photo_path' => $path,
+                    'type' => 'resolution'
+                ]);
+
+                // Store first photo in main table for backward compatibility
+                if ($index === 0) {
+                    $report->update(['resolution_photo_path' => $path]);
+                }
+            }
         }
 
         $report->save();
@@ -213,10 +230,12 @@ class ReportController extends Controller
 
     public function destroy(Report $report)
     {
-        if ($report->photo_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($report->photo_path);
+        // Delete all associated photos from storage
+        foreach ($report->photos as $photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->photo_path);
         }
 
+        // The report_photos records will be deleted by cascade in DB
         $report->delete();
 
         return redirect()->route('admin.dashboard')->with('status', 'Report deleted successfully!');

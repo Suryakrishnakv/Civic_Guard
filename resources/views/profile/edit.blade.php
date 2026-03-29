@@ -132,7 +132,34 @@
 
             <!-- Notification Preferences -->
             @if(Auth::user()->role === 'citizen')
-            <div class="bg-white shadow-xl shadow-slate-200/50 rounded-[2.5rem] p-12 relative overflow-hidden mb-8">
+            <div class="bg-white shadow-xl shadow-slate-200/50 rounded-[2.5rem] p-12 relative overflow-hidden mb-8"
+                 x-data="{ 
+                    isSubscribed: {{ $user->is_subscribed ? 'true' : 'false' }}, 
+                    statusMessage: '',
+                    isUpdating: false,
+                    async toggleSubscription() {
+                        if (this.isUpdating) return;
+                        this.isUpdating = true;
+                        try {
+                            const response = await fetch('{{ route('subscription.toggle') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            const data = await response.json();
+                            this.isSubscribed = data.is_subscribed;
+                            this.statusMessage = data.message;
+                            setTimeout(() => this.statusMessage = '', 3000);
+                        } catch (error) {
+                            console.error('Error toggling subscription:', error);
+                        } finally {
+                            this.isUpdating = false;
+                        }
+                    }
+                 }">
                 <header class="flex items-center justify-between mb-10">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-900 tracking-tight">
@@ -147,35 +174,40 @@
                     </div>
                 </header>
 
-                <form method="post" action="{{ route('subscription.toggle') }}">
-                    @csrf
-                    
-                    <div class="flex items-center justify-between p-6 bg-slate-50/80 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
-                        <div class="flex items-center gap-6">
-                            <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white border-2 border-slate-100 text-indigo-600 shadow-sm">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            </span>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900">Email Notifications</h4>
-                                <p class="text-sm text-slate-500 mt-1 font-medium">Receive official broadcasts and critical alerts via email.</p>
-                            </div>
+                <div class="flex items-center justify-between p-6 bg-slate-50/80 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center gap-6">
+                        <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white border-2 border-slate-100 text-indigo-600 shadow-sm">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </span>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900">Email Notifications</h4>
+                            <p class="text-sm text-slate-500 mt-1 font-medium">Receive official broadcasts and critical alerts via email.</p>
                         </div>
-
-                        <button type="submit" class="relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-4 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 {{ $user->is_subscribed ? 'bg-[#8B0000]' : 'bg-slate-300' }}" role="switch" aria-checked="{{ $user->is_subscribed ? 'true' : 'false' }}">
-                            <span aria-hidden="true" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out {{ $user->is_subscribed ? 'translate-x-6' : 'translate-x-0' }}"></span>
-                        </button>
                     </div>
 
-                     @if (session('status') && (session('status') == 'Subscribed to email updates!' || session('status') == 'Unsubscribed from email updates.'))
-                        <p
-                            x-data="{ show: true }"
-                            x-show="show"
-                            x-transition
-                            x-init="setTimeout(() => show = false, 3000)"
-                            class="mt-4 text-sm text-center font-bold {{ str_contains(session('status'), 'Subscribed') ? 'text-emerald-600' : 'text-slate-500' }}"
-                        >{{ session('status') }}</p>
-                    @endif
-                </form>
+                    <button @click.prevent="toggleSubscription()" 
+                            :disabled="isUpdating"
+                            :class="isSubscribed ? 'bg-[#8B0000]' : 'bg-slate-300'"
+                            class="relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-4 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" 
+                            role="switch" 
+                            :aria-checked="isSubscribed">
+                        <span aria-hidden="true" 
+                              :class="isSubscribed ? 'translate-x-6' : 'translate-x-0'"
+                              class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"></span>
+                    </button>
+                </div>
+
+                <div x-show="statusMessage"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform -translate-y-2"
+                     x-transition:enter-end="opacity-100 transform translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 transform translate-y-0"
+                     x-transition:leave-end="opacity-0 transform -translate-y-2"
+                     class="mt-4 text-sm text-center font-bold"
+                     :class="isSubscribed ? 'text-emerald-600' : 'text-slate-500'"
+                     x-text="statusMessage">
+                </div>
             </div>
             @endif
             

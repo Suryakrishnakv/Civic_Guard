@@ -214,7 +214,6 @@
                                                 <th scope="col" class="px-6 py-5 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Issue & Location</th>
                                                 <th scope="col" class="px-4 py-5 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Reporter</th>
                                                 <th scope="col" class="px-4 py-5 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Proof</th>
-                                                <th scope="col" class="px-4 py-5 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Priority</th>
                                                 <th scope="col" class="px-4 py-5 text-left text-xs font-bold text-slate-400 uppercase tracking-wider w-32">Status</th>
                                                 <th scope="col" class="pr-6 pl-4 py-5 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Actions</th>
                                             </tr>
@@ -260,15 +259,6 @@
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                                             </div>
                                                         @endif
-                                                    </td>
-                                                    <td class="px-4 py-4 whitespace-nowrap text-center">
-                                                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border
-                                                            {{ $report->priority === 'Low' ? 'bg-slate-100 text-slate-600 border-slate-200' : '' }}
-                                                            {{ $report->priority === 'Medium' ? 'bg-blue-50 text-blue-600 border-blue-100' : '' }}
-                                                            {{ $report->priority === 'High' ? 'bg-orange-50 text-orange-600 border-orange-100' : '' }}
-                                                            {{ $report->priority === 'Critical' ? 'bg-red-50 text-red-600 border-red-100' : '' }}">
-                                                            {{ $report->priority ?? 'Normal' }}
-                                                        </span>
                                                     </td>
                                                     <td class="px-4 py-4 whitespace-nowrap">
                                                         <form action="{{ route('admin.reports.update', $report) }}" method="POST">
@@ -326,59 +316,6 @@
                 <div class="xl:col-span-1 space-y-8">
                     
                     <!-- Critical Alerts -->
-                    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-rose-900/10 border border-rose-100 overflow-hidden group">
-                        <div class="p-8 border-b border-rose-50 flex justify-between items-center bg-gradient-to-r from-rose-50/50 to-white relative">
-                            <div class="absolute top-0 right-0 p-6 opacity-[0.05] pointer-events-none group-hover:rotate-12 transition-transform">
-                                <svg class="w-20 h-20 text-rose-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                            </div>
-                            <div class="flex items-center gap-4 relative z-10">
-                                <div class="w-12 h-12 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-600/20">
-                                    <span class="relative flex h-5 w-5">
-                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-200 opacity-75"></span>
-                                      <svg class="relative w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                    </span>
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-bold text-rose-900 font-eagle-lake tracking-tight leading-tight">
-                                        Critical Alerts
-                                    </h3>
-                                    <p class="text-[10px] text-rose-600 font-black uppercase tracking-widest mt-1">High-Priority Feed</p>
-                                </div>
-                            </div>
-                            <span class="text-[10px] font-black bg-rose-100 text-rose-700 px-3 py-1.5 rounded-xl shadow-sm border border-rose-200 relative z-10 uppercase tracking-widest">
-                                {{ $reports->whereIn('priority', ['High', 'Critical'])->where('status', 'Pending')->count() }} Active
-                            </span>
-                        </div>
-                        <div class="divide-y divide-rose-50">
-                             @forelse($reports->whereIn('priority', ['High', 'Critical'])->where('status', 'Pending')->take(5) as $alert)
-                                <div class="px-8 py-5 hover:bg-rose-50/30 transition-all cursor-pointer group/alert">
-                                    <div class="flex justify-between items-start gap-4">
-                                        <div>
-                                            <div class="flex items-center gap-2 mb-1.5">
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-600 text-white uppercase tracking-wider">
-                                                    {{ $alert->priority }}
-                                                </span>
-                                                <span class="text-[10px] font-bold text-slate-400 font-mono uppercase">{{ $alert->created_at->diffForHumans() }}</span>
-                                            </div>
-                                            <h4 class="text-sm font-bold text-slate-900 group-hover/alert:text-rose-600 transition-colors">{{ $alert->category }}</h4>
-                                            <p class="text-[11px] text-slate-500 mt-0.5 font-medium">{{ $alert->location }}</p>
-                                        </div>
-                                        <a href="{{ route('reports.show', $alert) }}" class="p-2 rounded-xl text-slate-300 hover:text-rose-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-rose-100 transition-all">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="px-8 py-16 text-center">
-                                    <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-100 shadow-inner">
-                                        <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    </div>
-                                    <p class="text-sm font-bold text-slate-900">System Nominal</p>
-                                    <p class="text-xs text-slate-500 mt-1">No critical alerts detected.</p>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
 
                     <!-- Status Distribution Chart (Review Overview) -->
                     <div class="bg-white shadow-xl shadow-slate-200/40 rounded-[2.5rem] border border-slate-100 p-8">

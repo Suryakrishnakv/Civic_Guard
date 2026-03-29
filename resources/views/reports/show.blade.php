@@ -68,17 +68,18 @@
                                      </div>
                                     {{ $report->department ?? 'General' }}
                                 </span>
-                                <span class="flex items-center gap-2">
-                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black border uppercase tracking-widest
-                                        {{ $report->priority === 'Low' ? 'bg-slate-50 text-slate-500 border-slate-100' : '' }}
-                                        {{ $report->priority === 'Medium' ? 'bg-blue-50 text-blue-500 border-blue-100' : '' }}
-                                        {{ $report->priority === 'High' ? 'bg-orange-50 text-orange-500 border-orange-100' : '' }}
-                                        {{ $report->priority === 'Critical' ? 'bg-rose-50 text-rose-500 border-rose-100' : '' }}">
-                                        {{ $report->priority ?? 'Normal' }} Priority
-                                    </span>
-                                </span>
                             </div>
                         </div>
+                        <div>
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Status</h4>
+                                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest
+                                    @if($report->status == 'Pending') bg-amber-100 text-amber-700 border border-amber-200
+                                    @elseif($report->status == 'In Progress') bg-indigo-100 text-indigo-700 border border-indigo-200
+                                    @elseif($report->status == 'Repaired') bg-emerald-100 text-emerald-700 border border-emerald-200
+                                    @else bg-slate-100 text-slate-700 border border-slate-200 @endif">
+                                    {{ $report->status }}
+                                </span>
+                            </div>
                      </div>
                 </div>
 
@@ -132,7 +133,7 @@
                                     @csrf
                                     @method('PATCH')
                                     
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="grid grid-cols-1 gap-6">
                                         <div>
                                             <label class="block text-sm font-bold text-slate-700 mb-1">Status</label>
                                             <select name="status" x-model="status" class="block w-full rounded-lg border-slate-300 focus:border-[#8B0000] focus:ring-[#8B0000] bg-white">
@@ -140,16 +141,6 @@
                                                 <option value="In Progress">In Progress</option>
                                                 <option value="Repaired">Repaired</option>
                                                 <option value="Rejected">Rejected</option>
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-bold text-slate-700 mb-1">Priority</label>
-                                            <select name="priority" class="block w-full rounded-lg border-slate-300 focus:border-[#8B0000] focus:ring-[#8B0000] bg-white">
-                                                <option value="Low" {{ $report->priority == 'Low' ? 'selected' : '' }}>Low</option>
-                                                <option value="Medium" {{ $report->priority == 'Medium' ? 'selected' : '' }}>Medium</option>
-                                                <option value="High" {{ $report->priority == 'High' ? 'selected' : '' }}>High</option>
-                                                <option value="Critical" {{ $report->priority == 'Critical' ? 'selected' : '' }}>Critical</option>
                                             </select>
                                         </div>
                                     </div>
@@ -160,15 +151,33 @@
                                     </div>
 
                                     <div x-data="{ 
-                                        preview: null,
-                                        handleFile(e) {
-                                            const file = e.target.files[0];
-                                            if (file) {
-                                                this.hasPhoto = true;
+                                        photos: [],
+                                        previews: [],
+                                        handleFiles(e) {
+                                            const newFiles = Array.from(e.target.files);
+                                            this.photos = [...this.photos, ...newFiles];
+                                            this.updateInput();
+                                            this.generatePreviews();
+                                            this.hasPhoto = this.photos.length > 0;
+                                        },
+                                        updateInput() {
+                                            const dt = new DataTransfer();
+                                            this.photos.forEach(file => dt.items.add(file));
+                                            document.getElementById('resolution_photos').files = dt.files;
+                                        },
+                                        generatePreviews() {
+                                            this.previews = [];
+                                            this.photos.forEach(file => {
                                                 const reader = new FileReader();
-                                                reader.onload = (e) => { this.preview = e.target.result; };
+                                                reader.onload = (e) => { this.previews.push(e.target.result); };
                                                 reader.readAsDataURL(file);
-                                            }
+                                            });
+                                        },
+                                        removePhoto(index) {
+                                            this.photos.splice(index, 1);
+                                            this.previews.splice(index, 1);
+                                            this.updateInput();
+                                            this.hasPhoto = this.photos.length > 0;
                                         }
                                     }">
                                         <div class="flex justify-between items-center mb-2">
@@ -181,33 +190,44 @@
                                         <!-- Premium Upload Area -->
                                         <div class="relative group/upload">
                                             <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-[1.25rem] bg-white group-hover/upload:border-[#8B0000]/50 transition-all duration-300 cursor-pointer overflow-hidden" 
-                                                 onclick="document.getElementById('resolution_photo').click()">
+                                                 x-show="photos.length === 0"
+                                                 onclick="document.getElementById('resolution_photos').click()">
                                                 
-                                                <div class="space-y-2 text-center" x-show="!preview">
+                                                <div class="space-y-2 text-center">
                                                     <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center mx-auto text-[#8B0000] group-hover/upload:scale-110 transition-transform duration-500 shadow-sm border border-red-100/50">
                                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                                     </div>
                                                     <div class="flex text-xs text-slate-500 justify-center">
-                                                        <span class="font-black text-[#8B0000] uppercase tracking-widest">Upload Photo</span>
+                                                        <span class="font-black text-[#8B0000] uppercase tracking-widest">Upload Photos</span>
                                                         <p class="pl-1 font-medium tracking-tight">or drag and drop</p>
                                                     </div>
-                                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">HD Images allowed up to 10MB</p>
-                                                </div>
-
-                                                <!-- Preview Overlay -->
-                                                <div x-show="preview" class="absolute inset-0 bg-white">
-                                                    <img :src="preview" class="w-full h-full object-cover">
-                                                    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover/upload:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-[10px] font-black text-slate-900 uppercase tracking-widest shadow-2xl">
-                                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                            Photo Selected - Click to change
-                                                        </div>
-                                                    </div>
+                                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">HD Images allowed up to 10MB each</p>
                                                 </div>
                                             </div>
-                                            <input type="file" name="resolution_photo" id="resolution_photo" class="hidden" accept="image/*" @change="handleFile($event)"/>
+
+                                            <!-- Preview Grid -->
+                                            <div x-show="photos.length > 0" class="grid grid-cols-2 gap-3">
+                                                <template x-for="(preview, index) in previews" :key="index">
+                                                    <div class="relative group rounded-xl overflow-hidden border border-slate-200 aspect-video bg-slate-100">
+                                                        <img :src="preview" class="w-full h-full object-cover">
+                                                        <button @click.prevent="removePhoto(index)" class="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                        </button>
+                                                    </div>
+                                                </template>
+                                                
+                                                <!-- Add More mini button -->
+                                                <button @click.prevent="document.getElementById('resolution_photos').click()" 
+                                                        class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl hover:border-[#8B0000] hover:bg-red-50 transition-all aspect-video text-slate-400 hover:text-[#8B0000]">
+                                                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                                    <span class="text-[8px] font-black uppercase tracking-widest">Add More</span>
+                                                </button>
+                                            </div>
+
+                                            <input type="file" name="resolution_photos[]" id="resolution_photos" class="hidden" accept="image/*" multiple @change="handleFiles($event)"/>
                                         </div>
-                                        <x-input-error :messages="$errors->get('resolution_photo')" class="mt-2" />
+                                        <x-input-error :messages="$errors->get('resolution_photos')" class="mt-2" />
+                                        <x-input-error :messages="$errors->get('resolution_photos.*')" class="mt-2" />
                                     </div>
 
                                     <div class="flex justify-end pt-4 border-t border-slate-200">
@@ -242,26 +262,37 @@
                         <!-- Right Column: Photos -->
                         <div class="space-y-8">
                             <div>
-                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Reported Issue Photo</h4>
-                                @if($report->photo_path)
-                                    <div class="group relative rounded-xl overflow-hidden shadow-lg border border-slate-200 bg-slate-50">
-                                        <img src="{{ asset('storage/' . $report->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain max-h-[500px]">
-                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none"></div>
-                                        <a href="{{ asset('storage/' . $report->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
-                                            View Full Size
-                                        </a>
-                                    </div>
-                                @else
-                                    <div class="rounded-xl border-2 border-dashed border-slate-200 p-12 text-center">
-                                        <svg class="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        <p class="text-slate-500 font-bold">No photo provided</p>
-                                    </div>
-                                @endif
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Reported Issue Photos</h4>
+                                <div class="space-y-4">
+                                    @forelse($report->reportedPhotos as $photo)
+                                        <div class="group relative rounded-xl overflow-hidden shadow-lg border border-slate-200 bg-slate-50">
+                                            <img src="{{ asset('storage/' . $photo->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain">
+                                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none"></div>
+                                            <a href="{{ asset('storage/' . $photo->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                View Full Size
+                                            </a>
+                                        </div>
+                                    @empty
+                                        @if($report->photo_path)
+                                            <div class="group relative rounded-xl overflow-hidden shadow-lg border border-slate-200 bg-slate-50">
+                                                <img src="{{ asset('storage/' . $report->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain">
+                                                <a href="{{ asset('storage/' . $report->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                    View Full Size
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div class="rounded-xl border-2 border-dashed border-slate-200 p-12 text-center">
+                                                <svg class="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <p class="text-slate-500 font-bold">No photos provided</p>
+                                            </div>
+                                        @endif
+                                    @endforelse
+                                </div>
                             </div>
 
-                            @if($report->resolution_photo_path)
+                            @if($report->resolutionPhotos->count() > 0 || $report->resolution_photo_path)
                             <div class="relative">
                                 <div class="absolute -inset-1 bg-gradient-to-r from-green-600 to-green-400 rounded-2xl blur opacity-25"></div>
                                 <div class="relative">
@@ -269,12 +300,26 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         Proof of Resolution
                                     </h4>
-                                    <div class="group relative rounded-xl overflow-hidden shadow-lg border border-green-200 bg-white">
-                                        <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1.5 rounded-bl-xl font-bold z-10 shadow-sm">RESOLVED</div>
-                                        <img src="{{ asset('storage/' . $report->resolution_photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain max-h-[500px]">
-                                        <a href="{{ asset('storage/' . $report->resolution_photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
-                                            View Full Size
-                                        </a>
+                                    <div class="space-y-4">
+                                        @foreach($report->resolutionPhotos as $photo)
+                                            <div class="group relative rounded-xl overflow-hidden shadow-lg border border-green-200 bg-white">
+                                                <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1.5 rounded-bl-xl font-bold z-10 shadow-sm">RESOLVED</div>
+                                                <img src="{{ asset('storage/' . $photo->photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain">
+                                                <a href="{{ asset('storage/' . $photo->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                    View Full Size
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                        
+                                        @if($report->resolutionPhotos->count() === 0 && $report->resolution_photo_path)
+                                            <div class="group relative rounded-xl overflow-hidden shadow-lg border border-green-200 bg-white">
+                                                <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1.5 rounded-bl-xl font-bold z-10 shadow-sm">RESOLVED</div>
+                                                <img src="{{ asset('storage/' . $report->resolution_photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain">
+                                                <a href="{{ asset('storage/' . $report->resolution_photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                    View Full Size
+                                                </a>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

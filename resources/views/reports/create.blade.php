@@ -56,10 +56,36 @@
                             category: '', 
                             location: '', 
                             description: '', 
-                            photo: false,
-                            checkPhoto(input) {
-                                this.photo = input.files && input.files[0];
-                                previewFile(input);
+                            photos: [],
+                            previews: [],
+                            handlePhotos(input) {
+                                const newFiles = Array.from(input.files);
+                                // Combine with existing photos if you want 'Add more' behavior
+                                // But standard input[type=file] replaces on change.
+                                // We can maintain an internal state and use DataTransfer to sync back.
+                                this.photos = [...this.photos, ...newFiles];
+                                this.updateInput();
+                                this.generatePreviews();
+                            },
+                            updateInput() {
+                                const dt = new DataTransfer();
+                                this.photos.forEach(file => dt.items.add(file));
+                                document.getElementById('photo').files = dt.files;
+                            },
+                            generatePreviews() {
+                                this.previews = [];
+                                this.photos.forEach(file => {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                        this.previews.push(e.target.result);
+                                    };
+                                    reader.readAsDataURL(file);
+                                });
+                            },
+                            removePhoto(index) {
+                                this.photos.splice(index, 1);
+                                this.previews.splice(index, 1);
+                                this.updateInput();
                             }
                           }">
                         @csrf
@@ -92,29 +118,51 @@
 
                         <!-- Photo -->
                         <div>
-                             <x-input-label for="photo" :value="__('Upload Photo (Required)')" class="text-slate-700 font-bold" />
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-lg hover:border-[#8B0000] transition-colors cursor-pointer bg-slate-50/50" onclick="document.getElementById('photo').click()">
+                            <x-input-label for="photo" :value="__('Upload Photos (At least one required)')" class="text-slate-700 font-bold" />
+                            
+                            <!-- Initial Upload Area (Visible when no photos) -->
+                            <div x-show="photos.length === 0" 
+                                 class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-lg hover:border-[#8B0000] transition-colors cursor-pointer bg-slate-50/50" 
+                                 onclick="document.getElementById('photo').click()">
                                 <div class="space-y-1 text-center">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <div class="flex text-sm text-slate-600 justify-center">
-                                        <label for="file-upload" class="relative cursor-pointer bg-transparent rounded-md font-bold text-[#8B0000] hover:text-red-700 focus-within:outline-none">
-                                            <span>Upload a file</span>
+                                        <label class="relative cursor-pointer bg-transparent rounded-md font-bold text-[#8B0000] hover:text-red-700 focus-within:outline-none">
+                                            <span>Upload images</span>
                                         </label>
                                         <p class="pl-1">or drag and drop</p>
                                     </div>
-                                    <p class="text-xs text-slate-400">PNG, JPG, GIF up to 10MB</p>
+                                    <p class="text-xs text-slate-400">PNG, JPG, GIF up to 10MB each</p>
                                 </div>
                             </div>
-                            <input type="file" name="photo" id="photo" accept="image/*" required class="hidden" onchange="Alpine.$data(this).checkPhoto(this)"/>
-                            <div id="file-preview" class="mt-2 hidden">
-                                <span class="text-sm text-green-600 font-medium flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    File Selected
-                                </span>
+
+                            <!-- Preview Grid and Add More Option -->
+                            <div x-show="photos.length > 0" class="mt-4 space-y-4">
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    <template x-for="(preview, index) in previews" :key="index">
+                                        <div class="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square bg-slate-100">
+                                            <img :src="preview" class="w-full h-full object-cover">
+                                            <button @click.prevent="removePhoto(index)" class="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </button>
+                                        </div>
+                                    </template>
+                                    
+                                    <!-- Add More Button -->
+                                    <button @click.prevent="document.getElementById('photo').click()" 
+                                            class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl hover:border-[#8B0000] hover:bg-red-50 transition-all aspect-square text-slate-400 hover:text-[#8B0000]">
+                                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                        <span class="text-xs font-bold uppercase tracking-widest">Add More</span>
+                                    </button>
+                                </div>
                             </div>
-                            <x-input-error :messages="$errors->get('photo')" class="mt-2" />
+
+                            <input type="file" name="photos[]" id="photo" accept="image/*" multiple class="hidden" @change="handlePhotos($event.target)"/>
+                            
+                            <x-input-error :messages="$errors->get('photos')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('photos.*')" class="mt-2" />
                         </div>
 
                         <div class="flex justify-end items-center gap-6 pt-8 border-t border-slate-100">
@@ -122,8 +170,8 @@
                                 Cancel
                             </a>
                             <button type="submit" 
-                                    :disabled="!category || !location || !description || !photo"
-                                    :class="(!category || !location || !description || !photo) ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:bg-red-800 shadow-red-900/10'"
+                                    :disabled="!category || !location || !description || photos.length === 0"
+                                    :class="(!category || !location || !description || photos.length === 0) ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:bg-red-800 shadow-red-900/10'"
                                     class="group relative inline-flex items-center px-10 py-4 bg-[#8B0000] border border-transparent rounded-2xl font-bold text-xs text-white uppercase tracking-widest transition-all shadow-xl active:scale-95 overflow-hidden">
                                  <span class="absolute inset-0 w-full h-full bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                                  <span class="relative flex items-center">
@@ -138,14 +186,4 @@
         </div>
     </div>
 
-    <script>
-        function previewFile(input) {
-            const preview = document.getElementById('file-preview');
-            if (input.files && input.files[0]) {
-                preview.classList.remove('hidden');
-            } else {
-                preview.classList.add('hidden');
-            }
-        }
-    </script>
 </x-authenticated-layout>
