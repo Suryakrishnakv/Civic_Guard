@@ -12,6 +12,8 @@ services:
     healthCheckPath: /
     region: singapore # Change this to your preferred region (e.g., singapore, oregon, frankfurt)
     envVars:
+      - key: PORT
+        value: 80
       - key: APP_KEY
         sync: false # Set this in the Render dashboard manually
       - key: APP_ENV
