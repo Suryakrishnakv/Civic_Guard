@@ -45,5 +45,5 @@ services:
           type: web
           name: asset-reporting-app
           property: host
-    # Run migrations before the web service starts
-    dockerCommand: "php artisan migrate --force && apache2-foreground"
+    # Run migrations during the pre-deploy stage (safer)
+    preDeployCommand: "php artisan migrate --force"
