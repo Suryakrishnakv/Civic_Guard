@@ -266,17 +266,17 @@
                                 <div class="space-y-4">
                                     @forelse($report->reportedPhotos as $photo)
                                         <div class="group relative rounded-xl overflow-hidden shadow-lg border border-slate-200 bg-slate-50">
-                                            <img src="{{ asset('storage/' . $photo->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain">
+                                            <img src="{{ $photo->photo_content ?? asset('storage/' . $photo->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain">
                                             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none"></div>
-                                            <a href="{{ asset('storage/' . $photo->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                            <a href="{{ $photo->photo_content ?? asset('storage/' . $photo->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
                                                 View Full Size
                                             </a>
                                         </div>
                                     @empty
                                         @if($report->photo_path)
                                             <div class="group relative rounded-xl overflow-hidden shadow-lg border border-slate-200 bg-slate-50">
-                                                <img src="{{ asset('storage/' . $report->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain">
-                                                <a href="{{ asset('storage/' . $report->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                <img src="{{ $report->photo_content ?? asset('storage/' . $report->photo_path) }}" alt="Report Photo" class="w-full h-auto object-contain">
+                                                <a href="{{ $report->photo_content ?? asset('storage/' . $report->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
                                                     View Full Size
                                                 </a>
                                             </div>
@@ -304,8 +304,8 @@
                                         @foreach($report->resolutionPhotos as $photo)
                                             <div class="group relative rounded-xl overflow-hidden shadow-lg border border-green-200 bg-white">
                                                 <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1.5 rounded-bl-xl font-bold z-10 shadow-sm">RESOLVED</div>
-                                                <img src="{{ asset('storage/' . $photo->photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain">
-                                                <a href="{{ asset('storage/' . $photo->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                <img src="{{ $photo->photo_content ?? asset('storage/' . $photo->photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain">
+                                                <a href="{{ $photo->photo_content ?? asset('storage/' . $photo->photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
                                                     View Full Size
                                                 </a>
                                             </div>
@@ -314,8 +314,8 @@
                                         @if($report->resolutionPhotos->count() === 0 && $report->resolution_photo_path)
                                             <div class="group relative rounded-xl overflow-hidden shadow-lg border border-green-200 bg-white">
                                                 <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1.5 rounded-bl-xl font-bold z-10 shadow-sm">RESOLVED</div>
-                                                <img src="{{ asset('storage/' . $report->resolution_photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain">
-                                                <a href="{{ asset('storage/' . $report->resolution_photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
+                                                <img src="{{ $report->resolution_photo_content ?? asset('storage/' . $report->resolution_photo_path) }}" alt="Resolution Proof" class="w-full h-auto object-contain">
+                                                <a href="{{ $report->resolution_photo_content ?? asset('storage/' . $report->resolution_photo_path) }}" target="_blank" class="absolute bottom-4 right-4 bg-white/90 p-2 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-sm font-bold text-slate-900">
                                                     View Full Size
                                                 </a>
                                             </div>

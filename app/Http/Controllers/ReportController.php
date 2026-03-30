@@ -39,15 +39,26 @@ class ReportController extends Controller
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $index => $photo) {
+                // Store standard file
                 $path = $photo->store('reports', 'public');
+                
+                // Read and encode for persistence
+                $base64 = base64_encode(file_get_contents($photo->getRealPath()));
+                $mime = $photo->getClientMimeType();
+                $fullBase64 = "data:$mime;base64,$base64";
+
                 $report->photos()->create([
                     'photo_path' => $path,
+                    'photo_content' => $fullBase64,
                     'type' => 'reported'
                 ]);
                 
                 // Store first photo in main table for backward compatibility
                 if ($index === 0) {
-                    $report->update(['photo_path' => $path]);
+                    $report->update([
+                        'photo_path' => $path,
+                        'photo_content' => $fullBase64
+                    ]);
                 }
             }
         }
@@ -210,15 +221,26 @@ class ReportController extends Controller
 
         if ($request->hasFile('resolution_photos')) {
             foreach ($request->file('resolution_photos') as $index => $photo) {
+                // Store standard file
                 $path = $photo->store('resolution_photos', 'public');
+                
+                // Read and encode for persistence
+                $base64 = base64_encode(file_get_contents($photo->getRealPath()));
+                $mime = $photo->getClientMimeType();
+                $fullBase64 = "data:$mime;base64,$base64";
+
                 $report->photos()->create([
                     'photo_path' => $path,
+                    'photo_content' => $fullBase64,
                     'type' => 'resolution'
                 ]);
 
                 // Store first photo in main table for backward compatibility
                 if ($index === 0) {
-                    $report->update(['resolution_photo_path' => $path]);
+                    $report->update([
+                        'resolution_photo_path' => $path,
+                        'resolution_photo_content' => $fullBase64
+                    ]);
                 }
             }
         }

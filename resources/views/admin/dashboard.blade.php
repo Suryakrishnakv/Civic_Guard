@@ -244,7 +244,7 @@
                                                             <div class="relative inline-block group/zoom">
                                                                 <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-lg blur opacity-0 group-hover/zoom:opacity-30 transition duration-500"></div>
                                                                 <div class="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
-                                                                    <img src="{{ asset('storage/' . $report->resolution_photo_path) }}" 
+                                                                    <img src="{{ $report->resolution_photo_content ?? asset('storage/' . $report->resolution_photo_path) }}" 
                                                                          alt="Proof" 
                                                                          class="w-full h-full object-cover transform transition duration-500 group-hover/zoom:scale-150 cursor-pointer"
                                                                          onclick="window.open(this.src, '_blank')">

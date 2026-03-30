@@ -103,8 +103,8 @@
                                                 'created_at' => $report->created_at->format('M d, Y h:i A'),
                                                 'updated_at' => $report->updated_at->format('M d, Y h:i A'),
                                                 'remarks' => $report->remarks ?? 'No remarks yet.',
-                                                'photo' => $report->photo_path ? asset('storage/'.$report->photo_path) : null,
-                                                'res_photo' => $report->resolution_photo_path ? asset('storage/'.$report->resolution_photo_path) : null,
+                                                'photo' => $report->photo_content ?? ($report->photo_path ? asset('storage/'.$report->photo_path) : null),
+                                                'res_photo' => $report->resolution_photo_content ?? ($report->resolution_photo_path ? asset('storage/'.$report->resolution_photo_path) : null),
                                             ];
                                         @endphp
                                         <button onclick='openReportModal(@json($repData))' class="text-slate-400 hover:text-[#8B0000] transition-colors">
