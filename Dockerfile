@@ -55,5 +55,5 @@ ENV APP_DEBUG=false
 EXPOSE 80
 
 # Command to run Apache
-# We run storage:link and config:cache before starting Apache
+# We run storage:link and caching to optimize performance
 CMD ["sh", "-c", "php artisan storage:link --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && apache2-foreground"]
