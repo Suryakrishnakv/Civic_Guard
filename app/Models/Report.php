@@ -16,10 +16,12 @@ class Report extends Model
         'department',
         'description',
         'photo_path',
+        'photo_content',
         'location',
         'status',
         'remarks',
         'resolution_photo_path',
+        'resolution_photo_content',
     ];
 
     public static function getCategoryDepartmentMap()
