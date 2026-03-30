@@ -2,18 +2,18 @@ databases:
   - name: asset-reporting-db
     databaseName: asset_reporting
     user: db_user
-    plan: postgres_free # Free tier or specify your plan
+    plan: free
 
 services:
   - type: web
     name: asset-reporting-app
     env: docker
-    plan: free # or starter
+    plan: free
     healthCheckPath: /
-    region: singapore # Change this to your preferred region (e.g., oregon, frankfurt)
+    region: singapore # Change this to your preferred region (e.g., singapore, oregon, frankfurt)
     envVars:
       - key: APP_KEY
-        sync: false # Requires manual setting in Dashboard or use a placeholder
+        sync: false # Set this in the Render dashboard manually
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
@@ -45,9 +45,5 @@ services:
           type: web
           name: asset-reporting-app
           property: host
-    disk:
-      name: storage-disk
-      mountPath: /var/www/html/storage/app/public
-      sizeGB: 1
     # Run migrations before the web service starts
     dockerCommand: "php artisan migrate --force && apache2-foreground"
