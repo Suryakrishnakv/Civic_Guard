@@ -25,6 +25,17 @@ class User extends Authenticatable
 
     public static function getDepartments()
     {
+        try {
+            if (class_exists(\App\Models\Department::class) && \Schema::hasTable('departments')) {
+                $dbDepts = \App\Models\Department::pluck('name')->toArray();
+                if (!empty($dbDepts)) {
+                    return $dbDepts;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback to static list during schema setup or testing
+        }
+
         return [
             self::DEPT_HEALTH,
             self::DEPT_ENGINEERING,
@@ -46,6 +57,7 @@ class User extends Authenticatable
         'password',
         'role',
         'department',
+        'categories',
         'is_subscribed',
     ];
 
@@ -70,6 +82,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_subscribed' => 'boolean',
+            'categories' => 'json',
         ];
     }
     public function reports()

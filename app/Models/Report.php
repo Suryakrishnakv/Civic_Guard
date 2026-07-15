@@ -26,6 +26,26 @@ class Report extends Model
 
     public static function getCategoryDepartmentMap()
     {
+        try {
+            if (class_exists(\App\Models\Department::class) && \Schema::hasTable('departments')) {
+                $map = [];
+                $depts = \App\Models\Department::all();
+                if ($depts->isNotEmpty()) {
+                    foreach ($depts as $dept) {
+                        $categories = $dept->categories;
+                        if (is_array($categories)) {
+                            foreach ($categories as $category) {
+                                $map[$category] = $dept->name;
+                            }
+                        }
+                    }
+                    return $map;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback to static mapping during migration/testing
+        }
+
         return [
             // Health & Sanitation
             'Mosquito Issue' => User::DEPT_HEALTH,

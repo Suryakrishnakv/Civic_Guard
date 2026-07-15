@@ -90,6 +90,17 @@
                                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
                                     {{ Auth::user()->isOfficer() ? 'Officer Dashboard' : 'Admin Dashboard' }}
                                 </a>
+                                @if(Auth::user()->isAdmin())
+                                    <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                        Citizens
+                                    </a>
+                                    <a href="{{ route('admin.officers.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                        Officers
+                                    </a>
+                                    <a href="{{ route('admin.departments.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                        Departments
+                                    </a>
+                                @endif
                             @endif
                         </div>
                     </div>

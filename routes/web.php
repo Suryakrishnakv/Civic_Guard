@@ -40,9 +40,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // User Management
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
 
     // Evaluation
     Route::get('/evaluations', [\App\Http\Controllers\EvaluationController::class, 'index'])->name('evaluations.index');
+
+    // Officer Management
+    Route::get('/officers', [\App\Http\Controllers\OfficerController::class, 'index'])->name('officers.index');
+    Route::get('/officers/create', [\App\Http\Controllers\OfficerController::class, 'create'])->name('officers.create');
+    Route::post('/officers', [\App\Http\Controllers\OfficerController::class, 'store'])->name('officers.store');
+    Route::delete('/officers/{user}', [\App\Http\Controllers\OfficerController::class, 'destroy'])->name('officers.destroy');
+
+    // Department Management
+    Route::resource('departments', \App\Http\Controllers\DepartmentController::class);
 });
 
 // SUBSCRIPTION ROUTES

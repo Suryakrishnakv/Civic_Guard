@@ -65,11 +65,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8 relative z-10">
             
             <!-- Key Metrics Grid -->
-             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
                 @if(Auth::user()->isAdmin())
                     <!-- Users Card -->
                     <a href="{{ route('admin.users.index') }}" class="block group">
-                        <div class="bg-white border-t-4 border-t-indigo-600 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                        <div class="bg-white border-t-4 border-t-indigo-600 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
                             <div class="flex justify-between items-start mb-6">
                                 <div>
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Citizens</p>
@@ -82,6 +82,25 @@
                             <div class="flex items-center text-[10px] text-emerald-600 bg-emerald-50 w-fit px-2.5 py-1 rounded-lg font-black uppercase tracking-wider border border-emerald-100/50">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
                                 Verified Access
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Officers Card -->
+                    <a href="{{ route('admin.officers.index') }}" class="block group">
+                        <div class="bg-white border-t-4 border-t-[#8B0000] shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Officers</p>
+                                    <h3 class="text-4xl font-eagle-lake font-bold text-slate-900 group-hover:text-[#8B0000] transition-colors leading-none">{{ $stats['total_officers'] }}</h3>
+                                </div>
+                                <div class="p-3.5 bg-red-50 border border-red-100 rounded-2xl text-[#8B0000] group-hover:rotate-12 transition-transform shadow-sm">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                </div>
+                            </div>
+                            <div class="flex items-center text-[10px] text-red-600 bg-red-50 w-fit px-2.5 py-1 rounded-lg font-black uppercase tracking-wider border border-red-100/50">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 animate-pulse"></span>
+                                Authorized Personnel
                             </div>
                         </div>
                     </a>
@@ -107,7 +126,7 @@
                 </a>
 
                 <!-- Pending -->
-                <a href="{{ route('admin.reports.manage', ['status' => 'pending']) }}" class="block group">
+                <a href="{{ route('admin.reports.manage', ['status' => 'pending']) }}" class="block group h-full">
                     <div class="bg-white border-t-4 border-t-amber-500 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
                         <div class="flex justify-between items-start mb-6">
                             <div>
@@ -126,7 +145,7 @@
                 </a>
 
                 <!-- Resolved -->
-                <a href="{{ route('admin.reports.manage', ['status' => 'resolved']) }}" class="block group">
+                <a href="{{ route('admin.reports.manage', ['status' => 'resolved']) }}" class="block group h-full">
                     <div class="bg-white border-t-4 border-t-emerald-500 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
                         <div class="flex justify-between items-start mb-6">
                             <div>
