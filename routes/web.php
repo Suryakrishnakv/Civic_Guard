@@ -71,6 +71,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Category SLA CRUD
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+
+    // Advanced Municipal Analytics Dashboard
+    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/data', [\App\Http\Controllers\AnalyticsController::class, 'ajaxData'])->name('analytics.data');
+    Route::get('/analytics/export/excel', [\App\Http\Controllers\AnalyticsController::class, 'exportExcel'])->name('analytics.export.excel');
+    Route::get('/analytics/export/pdf', [\App\Http\Controllers\AnalyticsController::class, 'exportPdf'])->name('analytics.export.pdf');
 });
 
 // SUBSCRIPTION ROUTES

@@ -64,104 +64,85 @@
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8 relative z-10">
             
-            <!-- Key Metrics Grid -->
-             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                @if(Auth::user()->isAdmin())
-                    <!-- Users Card -->
-                    <a href="{{ route('admin.users.index') }}" class="block group">
-                        <div class="bg-white border-t-4 border-t-indigo-600 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
+            @if(Auth::user()->isAdmin() && isset($analytics))
+                <!-- Advanced Municipal Analytics Dashboard (Requirements 1-10) -->
+                <x-municipal-analytics :analytics="$analytics" />
+            @else
+                <!-- Officer Key Metrics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Total Reports -->
+                    <a href="{{ route('admin.reports.manage', ['status' => 'all']) }}" class="block group">
+                        <div class="bg-white border-t-4 border-t-blue-600 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
                             <div class="flex justify-between items-start mb-6">
                                 <div>
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Citizens</p>
-                                    <h3 class="text-4xl font-eagle-lake font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-none">{{ $stats['total_users'] }}</h3>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Reports</p>
+                                    <h3 class="text-4xl font-eagle-lake font-bold text-slate-900 mt-1 leading-none">{{ $stats['total'] }}</h3>
                                 </div>
-                                <div class="p-3.5 bg-indigo-50 border border-indigo-100 rounded-2xl text-indigo-600 group-hover:rotate-12 transition-transform shadow-sm">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl text-blue-600 group-hover:rotate-12 transition-transform shadow-sm">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 </div>
                             </div>
-                            <div class="flex items-center text-[10px] text-emerald-600 bg-emerald-50 w-fit px-2.5 py-1 rounded-lg font-black uppercase tracking-wider border border-emerald-100/50">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-                                Verified Access
+                            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-1.5">
+                                <span class="w-1 h-3 bg-blue-200 rounded-full"></span>
+                                Department Workload
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Pending -->
+                    <a href="{{ route('admin.reports.manage', ['status' => 'pending']) }}" class="block group h-full">
+                        <div class="bg-white border-t-4 border-t-amber-500 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Action</p>
+                                    <h3 class="text-4xl font-eagle-lake font-bold text-[#8B0000] mt-1 leading-none">{{ $stats['pending'] }}</h3>
+                                </div>
+                                <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl text-amber-600 group-hover:rotate-12 transition-transform shadow-sm">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-amber-600 font-black uppercase tracking-widest flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse"></span>
+                                Requires Review
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Resolved -->
+                    <a href="{{ route('admin.reports.manage', ['status' => 'resolved']) }}" class="block group h-full">
+                        <div class="bg-white border-t-4 border-t-emerald-500 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Resolved Cases</p>
+                                    <h3 class="text-4xl font-eagle-lake font-bold text-emerald-600 mt-1 leading-none">{{ $stats['resolved'] }}</h3>
+                                </div>
+                                <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-600 group-hover:rotate-12 transition-transform shadow-sm">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden ring-1 ring-emerald-50 shadow-inner">
+                                <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-2 rounded-full" style="width: {{ $stats['total'] > 0 ? ($stats['resolved'] / $stats['total']) * 100 : 0 }}%"></div>
                             </div>
                         </div>
                     </a>
 
-                    <!-- Officers Card -->
-                    <a href="{{ route('admin.officers.index') }}" class="block group">
-                        <div class="bg-white border-t-4 border-t-[#8B0000] shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
-                            <div class="flex justify-between items-start mb-6">
-                                <div>
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Officers</p>
-                                    <h3 class="text-4xl font-eagle-lake font-bold text-slate-900 group-hover:text-[#8B0000] transition-colors leading-none">{{ $stats['total_officers'] }}</h3>
-                                </div>
-                                <div class="p-3.5 bg-red-50 border border-red-100 rounded-2xl text-[#8B0000] group-hover:rotate-12 transition-transform shadow-sm">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-[10px] text-red-600 bg-red-50 w-fit px-2.5 py-1 rounded-lg font-black uppercase tracking-wider border border-red-100/50">
-                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 animate-pulse"></span>
-                                Authorized Personnel
-                            </div>
-                        </div>
-                    </a>
-                @endif
-
-                <!-- Total Reports -->
-                <a href="{{ route('admin.reports.manage', ['status' => 'all']) }}" class="block group">
-                    <div class="bg-white border-t-4 border-t-blue-600 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
+                    <!-- Efficiency -->
+                    <div class="bg-gradient-to-br from-[#8B0000] to-red-950 text-white shadow-xl shadow-red-900/20 rounded-3xl p-6 relative overflow-hidden h-full">
                         <div class="flex justify-between items-start mb-6">
                             <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Reports</p>
-                                <h3 class="text-4xl font-eagle-lake font-bold text-slate-900 mt-1 leading-none">{{ $stats['total'] }}</h3>
+                                <p class="text-[10px] font-black text-red-200 uppercase tracking-widest mb-1">Department Efficiency</p>
+                                <h3 class="text-4xl font-eagle-lake font-bold mt-1 leading-none">{{ $stats['total'] > 0 ? round(($stats['resolved'] / $stats['total']) * 100, 1) : 0 }}%</h3>
                             </div>
-                             <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl text-blue-600 group-hover:rotate-12 transition-transform shadow-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <div class="p-3.5 bg-white/10 rounded-2xl text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             </div>
                         </div>
-                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-1.5">
-                            <span class="w-1 h-3 bg-blue-200 rounded-full"></span>
-                            Full Database Records
-                         </p>
+                        <p class="text-[10px] text-red-200 font-bold uppercase tracking-wider">
+                            (Repaired / Total) × 100
+                        </p>
                     </div>
-                </a>
-
-                <!-- Pending -->
-                <a href="{{ route('admin.reports.manage', ['status' => 'pending']) }}" class="block group h-full">
-                    <div class="bg-white border-t-4 border-t-amber-500 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
-                        <div class="flex justify-between items-start mb-6">
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Action</p>
-                                <h3 class="text-4xl font-eagle-lake font-bold text-[#8B0000] mt-1 leading-none">{{ $stats['pending'] }}</h3>
-                            </div>
-                             <div class="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl text-amber-600 group-hover:rotate-12 transition-transform shadow-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                        </div>
-                         <p class="text-[10px] text-amber-600 font-black uppercase tracking-widest flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
-                            Requires Review
-                         </p>
-                    </div>
-                </a>
-
-                <!-- Resolved -->
-                <a href="{{ route('admin.reports.manage', ['status' => 'resolved']) }}" class="block group h-full">
-                    <div class="bg-white border-t-4 border-t-emerald-500 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden h-full">
-                        <div class="flex justify-between items-start mb-6">
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Resolved Cases</p>
-                                <h3 class="text-4xl font-eagle-lake font-bold text-emerald-600 mt-1 leading-none">{{ $stats['resolved'] }}</h3>
-                            </div>
-                             <div class="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-600 group-hover:rotate-12 transition-transform shadow-sm">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                        </div>
-                        <div class="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden ring-1 ring-emerald-50 shadow-inner">
-                            <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-2 rounded-full" style="width: {{ $stats['total'] > 0 ? ($stats['resolved'] / $stats['total']) * 100 : 0 }}%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
+                </div>
+            @endif
 
             <!-- Interactive Live GIS Map Section (Requirements 1, 4, 6, 8, 9) -->
             <x-gis-map 

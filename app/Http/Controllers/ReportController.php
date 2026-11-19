@@ -345,16 +345,20 @@ class ReportController extends Controller
 
         if ($user->isAdmin()) {
             $reports = Report::with('user')->latest()->get();
+            $analytics = app(\App\Services\AnalyticsService::class)->getDashboardAnalytics($request);
             $stats = [
                 'total_users' => User::where('role', User::ROLE_CITIZEN)->count(),
                 'total_officers' => User::where('role', User::ROLE_OFFICER)->count(),
-                'total' => Report::count(),
-                'pending' => Report::where('status', 'Pending')->count(),
-                'in_progress' => Report::where('status', 'In Progress')->count(),
-                'resolved' => Report::where('status', 'Repaired')->count(),
+                'total' => $analytics['kpis']['total'],
+                'pending' => $analytics['kpis']['pending'],
+                'in_progress' => $analytics['kpis']['in_progress'],
+                'resolved' => $analytics['kpis']['repaired'],
+                'rejected' => $analytics['kpis']['rejected'],
+                'efficiency' => $analytics['kpis']['efficiency'],
+                'avg_resolution_time' => $analytics['resolution_time_stats']['formatted'],
             ];
             $sentBroadcasts = \App\Models\Announcement::where('user_id', $user->id)->latest()->get();
-            return view('admin.dashboard', compact('reports', 'stats', 'announcements', 'sentBroadcasts', 'departments', 'categories'));
+            return view('admin.dashboard', compact('reports', 'stats', 'announcements', 'sentBroadcasts', 'departments', 'categories', 'analytics'));
         } elseif ($user->isOfficer()) {
             $reports = Report::with('user')->where('department', $user->department)->latest()->get();
             $stats = [
