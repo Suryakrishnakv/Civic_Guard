@@ -163,6 +163,19 @@
                 </a>
             </div>
 
+            <!-- Interactive Live GIS Map Section (Requirements 1, 4, 6, 8, 9) -->
+            <x-gis-map 
+                id="admin-dashboard-map"
+                height="h-[480px] sm:h-[560px]"
+                :departments="$departments ?? []"
+                :categories="$categories ?? []"
+                :canToggleHeatmap="Auth::user()->isAdmin() || Auth::user()->isOfficer()"
+                :lockDepartment="Auth::user()->isOfficer()"
+                :defaultDepartment="Auth::user()->isOfficer() ? Auth::user()->department : 'all'"
+                :title="Auth::user()->isOfficer() ? (Auth::user()->department . ' - GIS Map') : 'City Infrastructure GIS Command Map'"
+                :subtitle="Auth::user()->isOfficer() ? 'Spatial tracking of complaints assigned to your department' : 'Comprehensive spatial mapping, status tracking, and density hotspot analysis'"
+            />
+
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
                 
                 <!-- Left Column: Department Reports & Analytics -->

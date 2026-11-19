@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,21 +17,62 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Dynamic Categories Seeder
+        $categoriesData = [
+            // Health & Sanitation
+            ['name' => 'Mosquito Issue', 'department' => User::DEPT_HEALTH, 'sla_days' => 3, 'severity' => 'Medium'],
+            ['name' => 'Sanitation Problem', 'department' => User::DEPT_HEALTH, 'sla_days' => 5, 'severity' => 'Medium'],
+            ['name' => 'Stray Animal', 'department' => User::DEPT_HEALTH, 'sla_days' => 4, 'severity' => 'Low'],
+
+            // Engineering & Public Works
+            ['name' => 'Road Damage', 'department' => User::DEPT_ENGINEERING, 'sla_days' => 7, 'severity' => 'High'],
+            ['name' => 'Drainage Block', 'department' => User::DEPT_ENGINEERING, 'sla_days' => 2, 'severity' => 'High'],
+            ['name' => 'Broken Footpath', 'department' => User::DEPT_ENGINEERING, 'sla_days' => 6, 'severity' => 'Low'],
+
+            // Solid Waste Collection
+            ['name' => 'Garbage Not Collected', 'department' => User::DEPT_WASTE, 'sla_days' => 1, 'severity' => 'Medium'],
+            ['name' => 'Overflowing Bin', 'department' => User::DEPT_WASTE, 'sla_days' => 2, 'severity' => 'Medium'],
+            ['name' => 'Illegal Dumping', 'department' => User::DEPT_WASTE, 'sla_days' => 3, 'severity' => 'High'],
+
+            // Electrical
+            ['name' => 'Street Light Not Working', 'department' => User::DEPT_ELECTRICITY, 'sla_days' => 3, 'severity' => 'Low'],
+            ['name' => 'Damaged Electric Pole', 'department' => User::DEPT_ELECTRICITY, 'sla_days' => 1, 'severity' => 'High'],
+            ['name' => 'Open Street Wiring', 'department' => User::DEPT_ELECTRICITY, 'sla_days' => 1, 'severity' => 'High'],
+
+            // Water Supply
+            ['name' => 'No Water Supply', 'department' => User::DEPT_WATER, 'sla_days' => 1, 'severity' => 'High'],
+            ['name' => 'Water Leakage', 'department' => User::DEPT_WATER, 'sla_days' => 2, 'severity' => 'Medium'],
+            ['name' => 'Sewer Overflow', 'department' => User::DEPT_WATER, 'sla_days' => 1, 'severity' => 'High'],
+
+            // Planning
+            ['name' => 'Illegal Construction', 'department' => User::DEPT_PLANNING, 'sla_days' => 14, 'severity' => 'Medium'],
+            ['name' => 'Building Safety Issue', 'department' => User::DEPT_PLANNING, 'sla_days' => 5, 'severity' => 'High'],
+            ['name' => 'Road Encroachment', 'department' => User::DEPT_PLANNING, 'sla_days' => 10, 'severity' => 'Medium'],
+        ];
+
+        foreach ($categoriesData as $c) {
+            Category::updateOrCreate(['name' => $c['name']], $c);
+        }
+
         // Admin
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('admin123'),
-            'role' => User::ROLE_ADMIN,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('admin123'),
+                'role' => User::ROLE_ADMIN,
+            ]
+        );
 
         // Citizen
-        User::create([
-            'name' => 'Surya Krishna',
-            'email' => 'suryakrishnakv@gmail.com',
-            'password' => Hash::make('surya123'),
-            'role' => User::ROLE_CITIZEN,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'suryakrishnakv@gmail.com'],
+            [
+                'name' => 'Surya Krishna',
+                'password' => Hash::make('surya123'),
+                'role' => User::ROLE_CITIZEN,
+            ]
+        );
 
         // Officers
         $officers = [
@@ -73,13 +115,18 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($officers as $officer) {
-            User::create([
-                'name' => $officer['name'],
-                'email' => $officer['email'],
-                'password' => Hash::make($officer['password']),
-                'role' => User::ROLE_OFFICER,
-                'department' => $officer['department'],
-            ]);
+            User::firstOrCreate(
+                ['email' => $officer['email']],
+                [
+                    'name' => $officer['name'],
+                    'password' => Hash::make($officer['password']),
+                    'role' => User::ROLE_OFFICER,
+                    'department' => $officer['department'],
+                ]
+            );
         }
+
+        // Seed realistic GIS complaints
+        $this->call(ReportSeeder::class);
     }
 }

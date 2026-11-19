@@ -22,6 +22,17 @@ class Report extends Model
         'remarks',
         'resolution_photo_path',
         'resolution_photo_content',
+        'latitude',
+        'longitude',
+        'address',
+        'support_count',
+        'assigned_officer_id',
+        'priority_score',
+        'sla_deadline',
+        'rating',
+        'feedback',
+        'is_spam',
+        'merged_into_id',
     ];
 
     public static function getCategoryDepartmentMap()
@@ -82,6 +93,99 @@ class Report extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($report) {
+            $report->statusHistories()->create([
+                'status' => $report->status ?? 'Pending',
+                'remarks' => 'Complaint filed.',
+                'changed_by' => auth()->id() ?? $report->user_id,
+            ]);
+            
+            if ($report->assigned_officer_id) {
+                $officer = User::find($report->assigned_officer_id);
+                if ($officer) {
+                    $report->statusHistories()->create([
+                        'status' => $report->status ?? 'Pending',
+                        'remarks' => "Automatically assigned to officer: {$officer->name} based on workload balance.",
+                        'changed_by' => null,
+                    ]);
+                }
+            }
+        });
+
+        static::updating(function ($report) {
+            if ($report->isDirty('status') || $report->isDirty('remarks')) {
+                $report->statusHistories()->create([
+                    'status' => $report->status,
+                    'remarks' => $report->remarks ?? 'Status updated.',
+                    'changed_by' => auth()->id(),
+                ]);
+            }
+            if ($report->isDirty('assigned_officer_id') && $report->assigned_officer_id) {
+                $officer = User::find($report->assigned_officer_id);
+                if ($officer) {
+                    $report->statusHistories()->create([
+                        'status' => $report->status,
+                        'remarks' => "Assigned to officer: {$officer->name}.",
+                        'changed_by' => auth()->id(),
+                    ]);
+                }
+            }
+        });
+    }
+
+    public function recalculatePriorityScore()
+    {
+        $categoryModel = Category::where('name', $this->category)->first();
+        $severity = $categoryModel ? $categoryModel->severity : 'Medium';
+        
+        $severityPoints = [
+            'Low' => 10,
+            'Medium' => 30,
+            'High' => 50
+        ][$severity] ?? 30;
+
+        $supportsCount = $this->support_count;
+        $supportsPoints = $supportsCount * 5;
+
+        $daysOld = $this->created_at ? $this->created_at->diffInDays(now()) : 0;
+        $agePoints = $daysOld * 2;
+
+        $this->priority_score = $severityPoints + $supportsPoints + $agePoints;
+        $this->saveQuietly(); // Avoid infinite loops in updating hooks
+    }
+
+    public function assignedOfficer()
+    {
+        return $this->belongsTo(User::class, 'assigned_officer_id');
+    }
+
+    public function supports()
+    {
+        return $this->hasMany(Support::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(ReportStatusHistory::class);
+    }
+
+    public function mergedInto()
+    {
+        return $this->belongsTo(Report::class, 'merged_into_id');
+    }
+
+    public function mergedReports()
+    {
+        return $this->hasMany(Report::class, 'merged_into_id');
     }
 
     public function photos()

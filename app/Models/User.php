@@ -90,6 +90,11 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
 
+    public function assignedReports()
+    {
+        return $this->hasMany(Report::class, 'assigned_officer_id');
+    }
+
     public function isOfficer()
     {
         return $this->role === self::ROLE_OFFICER;

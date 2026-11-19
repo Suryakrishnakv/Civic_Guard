@@ -14,6 +14,12 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon-logo.png') }}">
     <script src="//unpkg.com/alpinejs" defer></script>
 
+    <!-- Leaflet.js & OpenStreetMap CSS/JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    @stack('styles')
+
     <!-- Scripts -->
     <!-- Tailwind CSS via CDN (Development Only) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -83,21 +89,32 @@
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             @if(Auth::user()->role === 'citizen')
-                                <a href="{{ route('dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                <a href="{{ route('dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('dashboard') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                     Dashboard
                                 </a>
+                                <a href="{{ route('reports.citizen') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('reports.citizen') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
+                                    My Reports
+                                </a>
+                                <a href="{{ route('admin.reports.map') }}" class="inline-flex items-center gap-1.5 px-1 pt-1 border-b-2 {{ request()->routeIs('admin.reports.map') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
+                                    <svg class="w-4 h-4 text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                                    Live GIS Map
+                                </a>
                             @else
-                                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.dashboard') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                     {{ Auth::user()->isOfficer() ? 'Officer Dashboard' : 'Admin Dashboard' }}
                                 </a>
+                                <a href="{{ route('admin.reports.map') }}" class="inline-flex items-center gap-1.5 px-1 pt-1 border-b-2 {{ request()->routeIs('admin.reports.map') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
+                                    <svg class="w-4 h-4 text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                                    Live GIS Map
+                                </a>
                                 @if(Auth::user()->isAdmin())
-                                    <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                    <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.users.*') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                         Citizens
                                     </a>
-                                    <a href="{{ route('admin.officers.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                    <a href="{{ route('admin.officers.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.officers.*') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                         Officers
                                     </a>
-                                    <a href="{{ route('admin.departments.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000] transition duration-300 ease-in-out">
+                                    <a href="{{ route('admin.departments.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.departments.*') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                         Departments
                                     </a>
                                 @endif
@@ -243,5 +260,6 @@
             {{ $slot }}
         </main>
     </div>
+    @stack('scripts')
 </body>
 </html>

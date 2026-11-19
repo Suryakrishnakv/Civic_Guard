@@ -25,11 +25,26 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 // REPORT ROUTES
 Route::middleware('auth')->group(function () {
+    Route::get('/reports/check-duplicate', [ReportController::class, 'checkDuplicate'])->name('reports.checkDuplicate');
+    Route::get('/reports/map-data', [ReportController::class, 'mapData'])->name('reports.mapData');
+    Route::post('/reports/{report}/support', [ReportController::class, 'support'])->name('reports.support');
+    Route::post('/reports/{report}/comments', [ReportController::class, 'addComment'])->name('reports.comments.store');
+    Route::post('/reports/{report}/rate', [ReportController::class, 'rateReport'])->name('reports.rate');
+
     Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
     // Allow both Admin and Officer to update
     Route::patch('/admin/reports/{report}', [ReportController::class, 'update'])->name('admin.reports.update'); 
+
+    // Officer field work map planner & Batch actions
+    Route::get('/admin/reports-map', [ReportController::class, 'officerMap'])->name('admin.reports.map');
+    Route::post('/admin/reports/batch', [ReportController::class, 'batchUpdate'])->name('admin.reports.batch');
+
+    // Moderation routes (also accessible to admins & officers of target department)
+    Route::post('/admin/reports/{report}/merge', [ReportController::class, 'mergeReport'])->name('admin.reports.merge');
+    Route::post('/admin/reports/{report}/spam', [ReportController::class, 'markSpam'])->name('admin.reports.spam');
+    Route::post('/admin/reports/{report}/reassign', [ReportController::class, 'reassign'])->name('admin.reports.reassign');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -53,6 +68,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Department Management
     Route::resource('departments', \App\Http\Controllers\DepartmentController::class);
+
+    // Category SLA CRUD
+    Route::resource('categories', \App\Http\Controllers\CategoryController::class);
 });
 
 // SUBSCRIPTION ROUTES

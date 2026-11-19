@@ -140,6 +140,18 @@
                 </a>
             </div>
 
+            <!-- Interactive Live GIS Map Section (Requirement 1) -->
+            <x-gis-map 
+                id="citizen-dashboard-map"
+                height="h-[440px] sm:h-[500px]"
+                :departments="$departments ?? []"
+                :categories="$categories ?? []"
+                :canToggleHeatmap="false"
+                :lockDepartment="false"
+                title="Community Civic Issue Map"
+                subtitle="Live spatial map of community reports, resolution progress, and local public asset issues"
+            />
+
             <!-- Recent Reports Section -->
             <div class="bg-white border border-slate-200/60 shadow-2xl shadow-slate-200/50 rounded-[2rem] overflow-hidden">
                 <div class="p-8 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
