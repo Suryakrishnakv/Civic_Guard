@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Report;
 use App\Models\User;
+use App\Models\Ward;
 use Illuminate\Database\Seeder;
 
 class ReportSeeder extends Seeder
@@ -197,6 +198,7 @@ class ReportSeeder extends Seeder
 
         foreach ($reportsData as $data) {
             $officer = $officers[$data['department']] ?? null;
+            $ward = Ward::findWardByCoordinates($data['latitude'], $data['longitude']);
 
             Report::create([
                 'user_id' => $citizen->id,
@@ -209,6 +211,7 @@ class ReportSeeder extends Seeder
                 'address' => $data['address'],
                 'latitude' => $data['latitude'],
                 'longitude' => $data['longitude'],
+                'ward_id' => $ward ? $ward->id : null,
                 'assigned_officer_id' => $officer ? $officer->id : null,
                 'remarks' => $data['remarks'] ?? null,
                 'created_at' => $data['created_at'],

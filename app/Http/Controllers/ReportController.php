@@ -35,6 +35,18 @@ class ReportController extends Controller
         $map = Report::getCategoryDepartmentMap();
         $department = $map[$request->category] ?? null;
 
+        // Point-in-polygon Ward Identification
+        $wardId = null;
+        if ($request->filled('latitude') && $request->filled('longitude')) {
+            $detectedWard = \App\Models\Ward::findWardByCoordinates((float)$request->latitude, (float)$request->longitude);
+            if ($detectedWard) {
+                $wardId = $detectedWard->id;
+            }
+        }
+        if (!$wardId && $request->filled('ward_id')) {
+            $wardId = $request->ward_id;
+        }
+
         $report = Report::create([
             'user_id' => Auth::id(),
             'type' => 'Damage',
@@ -45,6 +57,7 @@ class ReportController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'address' => $request->address ?? $request->location,
+            'ward_id' => $wardId,
             'status' => 'Pending',
         ]);
 
@@ -179,9 +192,20 @@ class ReportController extends Controller
                   ->orWhere('longitude', '!=', 0);
             });
 
+        // Ward filter
+        if ($request->filled('ward_id') && $request->ward_id !== 'all') {
+            $query->where('ward_id', $request->ward_id);
+        }
+
         // Role-based scope (Requirement 6):
         if ($user->isOfficer()) {
             $query->where('department', $user->department);
+            if ($request->get('scope') === 'assigned_wards') {
+                $assignedWardIds = $user->wards()->pluck('wards.id')->toArray();
+                if (!empty($assignedWardIds)) {
+                    $query->whereIn('ward_id', $assignedWardIds);
+                }
+            }
         } elseif ($user->isAdmin()) {
             if ($request->filled('department') && $request->department !== 'all') {
                 $query->where('department', $request->department);
@@ -238,7 +262,7 @@ class ReportController extends Controller
             }
         }
 
-        $reports = $query->with('photos')
+        $reports = $query->with(['photos', 'ward'])
             ->latest()
             ->take(1000)
             ->get();
@@ -276,6 +300,8 @@ class ReportController extends Controller
                 'case_number' => '#' . str_pad($r->id, 5, '0', STR_PAD_LEFT),
                 'category' => $r->category,
                 'department' => $r->department ?? 'General',
+                'ward_id' => $r->ward_id,
+                'ward_name' => $r->ward ? ("Ward #" . $r->ward->ward_number . " - " . $r->ward->name) : 'Unassigned Ward',
                 'description' => Str::limit($r->description, 160),
                 'status' => $r->status,
                 'color' => $markerColor,

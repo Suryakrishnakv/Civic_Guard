@@ -27,6 +27,7 @@ class Report extends Model
         'address',
         'support_count',
         'assigned_officer_id',
+        'ward_id',
         'priority_score',
         'sla_deadline',
         'rating',
@@ -93,6 +94,11 @@ class Report extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function ward()
+    {
+        return $this->belongsTo(Ward::class);
     }
 
     protected static function booted()

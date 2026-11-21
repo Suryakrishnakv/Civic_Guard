@@ -95,6 +95,16 @@ class User extends Authenticatable
         return $this->hasMany(Report::class, 'assigned_officer_id');
     }
 
+    public function wards()
+    {
+        return $this->belongsToMany(Ward::class, 'ward_user')->withTimestamps();
+    }
+
+    public function isAssignedToWard($wardId): bool
+    {
+        return $this->wards()->where('wards.id', $wardId)->exists();
+    }
+
     public function isOfficer()
     {
         return $this->role === self::ROLE_OFFICER;

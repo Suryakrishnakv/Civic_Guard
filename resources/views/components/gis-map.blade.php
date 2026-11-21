@@ -249,7 +249,8 @@ function gisMapComponent(config) {
             department: config.defaultDepartment || 'all',
             category: 'all',
             status: 'all',
-            date: 'all'
+            date: 'all',
+            ward_id: 'all'
         },
         
         reports: [],
@@ -293,6 +294,9 @@ function gisMapComponent(config) {
             }
             if (this.filters.status && this.filters.status !== 'all') {
                 params.append('status', this.filters.status);
+            }
+            if (this.filters.ward_id && this.filters.ward_id !== 'all') {
+                params.append('ward_id', this.filters.ward_id);
             }
             if (this.filters.date && this.filters.date !== 'all') {
                 params.append('date', this.filters.date);
@@ -502,7 +506,10 @@ function gisMapComponent(config) {
 
                     <!-- Category & Department -->
                     <div class="mt-2">
-                        <h4 class="text-sm font-bold text-slate-900 leading-tight">${report.category}</h4>
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="text-sm font-bold text-slate-900 leading-tight">${report.category}</h4>
+                            ${report.ward_name ? `<span class="text-[9px] font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 shrink-0">${report.ward_name}</span>` : ''}
+                        </div>
                         <p class="text-[11px] text-slate-500 font-medium mt-0.5">${report.department || 'Municipal'}</p>
                     </div>
 

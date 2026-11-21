@@ -25,6 +25,8 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 // REPORT ROUTES
 Route::middleware('auth')->group(function () {
+    Route::get('/reports/detect-ward', [\App\Http\Controllers\WardController::class, 'detectWard'])->name('reports.detectWard');
+    Route::get('/wards/detect', [\App\Http\Controllers\WardController::class, 'detectWard'])->name('wards.detect');
     Route::get('/reports/check-duplicate', [ReportController::class, 'checkDuplicate'])->name('reports.checkDuplicate');
     Route::get('/reports/map-data', [ReportController::class, 'mapData'])->name('reports.mapData');
     Route::post('/reports/{report}/support', [ReportController::class, 'support'])->name('reports.support');
@@ -45,6 +47,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/reports/{report}/merge', [ReportController::class, 'mergeReport'])->name('admin.reports.merge');
     Route::post('/admin/reports/{report}/spam', [ReportController::class, 'markSpam'])->name('admin.reports.spam');
     Route::post('/admin/reports/{report}/reassign', [ReportController::class, 'reassign'])->name('admin.reports.reassign');
+
+    // Ward Management & Analytics (Admin & Officer)
+    Route::get('/admin/wards', [\App\Http\Controllers\WardController::class, 'index'])->name('admin.wards.index');
+    Route::get('/admin/wards/create', [\App\Http\Controllers\WardController::class, 'create'])->name('admin.wards.create');
+    Route::post('/admin/wards', [\App\Http\Controllers\WardController::class, 'store'])->name('admin.wards.store');
+    Route::get('/admin/wards/export/excel', [\App\Http\Controllers\WardController::class, 'exportExcel'])->name('admin.wards.export.excel');
+    Route::get('/admin/wards/export/pdf', [\App\Http\Controllers\WardController::class, 'exportPdf'])->name('admin.wards.export.pdf');
+    Route::get('/admin/wards/{ward}', [\App\Http\Controllers\WardController::class, 'show'])->name('admin.wards.show');
+    Route::get('/admin/wards/{ward}/inspection-report', [\App\Http\Controllers\WardController::class, 'inspectionReport'])->name('admin.wards.inspectionReport');
+    Route::get('/admin/wards/{ward}/edit', [\App\Http\Controllers\WardController::class, 'edit'])->name('admin.wards.edit');
+    Route::put('/admin/wards/{ward}', [\App\Http\Controllers\WardController::class, 'update'])->name('admin.wards.update');
+    Route::delete('/admin/wards/{ward}', [\App\Http\Controllers\WardController::class, 'destroy'])->name('admin.wards.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

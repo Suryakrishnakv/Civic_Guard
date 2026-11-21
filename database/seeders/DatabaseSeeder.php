@@ -126,6 +126,9 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // Seed municipal wards
+        $this->call(WardSeeder::class);
+
         // Seed realistic GIS complaints
         $this->call(ReportSeeder::class);
     }

@@ -58,6 +58,7 @@
                         <input type="hidden" name="latitude" id="latitude" x-model="latitude">
                         <input type="hidden" name="longitude" id="longitude" x-model="longitude">
                         <input type="hidden" name="address" id="address" x-model="address">
+                        <input type="hidden" name="ward_id" id="ward_id" :value="detectedWard ? detectedWard.id : ''">
 
                         <!-- Category -->
                         <div>
@@ -128,6 +129,92 @@
                                     <span class="font-mono font-bold text-[#8B0000]" x-text="longitude ? longitude.toFixed(6) : 'Not set'"></span>
                                 </div>
                                 <span class="text-[11px] text-slate-400 italic">Click or drag pin to update</span>
+                            </div>
+
+                            <!-- Automatic Municipal Ward Identification Card (Requirement: Citizen Ward Identification) -->
+                            <div class="rounded-2xl border transition-all duration-300 overflow-hidden shadow-sm"
+                                 :class="detectedWard ? 'bg-gradient-to-r from-emerald-50/80 via-white to-teal-50/80 border-emerald-200' : 'bg-slate-50 border-slate-200'">
+                                <div class="p-4 sm:p-5">
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                                                 :class="detectedWard ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500'">
+                                                <template x-if="isDetectingWard">
+                                                    <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                </template>
+                                                <template x-if="!isDetectingWard && detectedWard">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                                </template>
+                                                <template x-if="!isDetectingWard && !detectedWard">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                                </template>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full"
+                                                          :class="detectedWard ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'"
+                                                          x-text="detectedWard ? ('Ward #' + detectedWard.ward_number) : 'Municipal Zone'">
+                                                    </span>
+                                                    <span class="text-xs font-bold text-slate-700">Point-in-Polygon GIS Detection</span>
+                                                </div>
+                                                <h4 class="text-base font-bold text-slate-900 mt-1"
+                                                    x-text="detectedWard ? detectedWard.name : (isDetectingWard ? 'Identifying Ward Boundaries...' : 'Outside Defined Municipal Wards')">
+                                                </h4>
+                                                <p class="text-xs text-slate-500 mt-0.5"
+                                                   x-text="detectedWard ? (detectedWard.description || 'Verified Municipal Ward Territory') : 'Your complaint will be handled by the central municipal engineering control room.'">
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <template x-if="detectedWard">
+                                            <div class="text-right shrink-0 bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-emerald-100">
+                                                <span class="text-[10px] font-bold text-slate-400 block uppercase">Ward Efficiency</span>
+                                                <span class="text-lg font-black text-emerald-700" x-text="detectedWard.resolution_efficiency + '%'"></span>
+                                                <span class="text-[10px] text-slate-500 block" x-text="detectedWard.total_reports + ' Total Reports'"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- Ward-wise Statistics Pill Breakdown -->
+                                    <template x-if="detectedWard">
+                                        <div class="mt-4 pt-3 border-t border-emerald-200/60 flex flex-wrap items-center gap-4 text-xs font-medium text-slate-600">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                                <span>Pending: <strong class="text-slate-900" x-text="detectedWard.pending_reports"></strong></span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                                <span>In Progress: <strong class="text-slate-900" x-text="detectedWard.in_progress_reports"></strong></span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                <span>Repaired: <strong class="text-slate-900" x-text="detectedWard.repaired_reports"></strong></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Nearby Complaints in this Ward -->
+                                <template x-if="nearbyWardReports.length > 0">
+                                    <div class="bg-white/90 border-t border-emerald-100 p-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-bold text-slate-700">Active Complaints in this Ward:</span>
+                                            <span class="text-[11px] font-bold text-emerald-700" x-text="nearbyWardReports.length + ' active issues'"></span>
+                                        </div>
+                                        <div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                                            <template x-for="item in nearbyWardReports" :key="item.id">
+                                                <div class="flex items-center justify-between text-xs p-2 bg-slate-50 hover:bg-emerald-50/50 rounded-lg border border-slate-100 transition-colors">
+                                                    <div class="flex items-center gap-2 truncate">
+                                                        <span class="font-bold text-slate-800" x-text="'#' + item.id"></span>
+                                                        <span class="text-slate-600 font-medium" x-text="item.category"></span>
+                                                        <span class="text-slate-400 text-[11px] truncate" x-text="'- ' + item.location"></span>
+                                                    </div>
+                                                    <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded text-amber-700 bg-amber-100 shrink-0" x-text="item.status"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
 
                             <!-- Location Address Text Input -->
@@ -278,6 +365,10 @@
             searchQuery: '',
             nearbyComplaints: [],
             checkDuplicateTimeout: null,
+            detectedWard: null,
+            isDetectingWard: false,
+            nearbyWardReports: [],
+            detectWardTimeout: null,
 
             init() {
                 this.$nextTick(() => {
@@ -347,6 +438,7 @@
                 // Reverse geocode initial position
                 this.reverseGeocode(defaultLat, defaultLng);
                 this.checkDuplicates(defaultLat, defaultLng);
+                this.detectWard(defaultLat, defaultLng);
             },
 
             updateCoordinates(lat, lng, fetchAddress = false) {
@@ -363,6 +455,34 @@
                 this.checkDuplicateTimeout = setTimeout(() => {
                     this.checkDuplicates(lat, lng);
                 }, 400);
+
+                // Debounced point-in-polygon ward detection
+                clearTimeout(this.detectWardTimeout);
+                this.detectWardTimeout = setTimeout(() => {
+                    this.detectWard(lat, lng);
+                }, 300);
+            },
+
+            detectWard(lat, lng) {
+                this.isDetectingWard = true;
+                fetch(`{{ route('reports.detectWard') }}?latitude=${lat}&longitude=${lng}`, {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.isDetectingWard = false;
+                    if (data.found && data.ward) {
+                        this.detectedWard = data.ward;
+                        this.nearbyWardReports = data.nearby_ward_reports || [];
+                    } else {
+                        this.detectedWard = null;
+                        this.nearbyWardReports = [];
+                    }
+                })
+                .catch(err => {
+                    this.isDetectingWard = false;
+                    console.warn("Ward detection error:", err);
+                });
             },
 
             detectGPSLocation() {

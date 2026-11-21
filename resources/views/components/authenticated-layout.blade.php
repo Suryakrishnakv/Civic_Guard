@@ -99,6 +99,10 @@
                                     <svg class="w-4 h-4 text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
                                     Live GIS Map
                                 </a>
+                                <a href="{{ route('admin.wards.index') }}" class="inline-flex items-center gap-1.5 px-1 pt-1 border-b-2 {{ request()->routeIs('admin.wards.*') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
+                                    <svg class="w-4 h-4 text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    Municipal Wards
+                                </a>
                             @else
                                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.dashboard') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                     {{ Auth::user()->isOfficer() ? 'Officer Dashboard' : 'Admin Dashboard' }}
@@ -106,6 +110,10 @@
                                 <a href="{{ route('admin.reports.map') }}" class="inline-flex items-center gap-1.5 px-1 pt-1 border-b-2 {{ request()->routeIs('admin.reports.map') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
                                     <svg class="w-4 h-4 text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
                                     Live GIS Map
+                                </a>
+                                <a href="{{ route('admin.wards.index') }}" class="inline-flex items-center gap-1.5 px-1 pt-1 border-b-2 {{ request()->routeIs('admin.wards.*') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
+                                    <svg class="w-4 h-4 text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    Municipal Wards
                                 </a>
                                 @if(Auth::user()->isAdmin())
                                     <a href="{{ route('admin.analytics.index') }}" class="inline-flex items-center gap-1.5 px-1 pt-1 border-b-2 {{ request()->routeIs('admin.analytics.*') ? 'border-[#8B0000] text-[#8B0000]' : 'border-transparent text-gray-500 hover:text-[#8B0000] hover:border-[#8B0000]' }} text-sm font-medium leading-5 transition duration-300 ease-in-out">
